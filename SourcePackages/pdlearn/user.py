@@ -7,7 +7,7 @@ def get_user():
     if len(argv) > 1:
         uname = argv[1]
     else:
-        uname = '1'#input("输入用户标记名：")
+        uname = '1'  # input("输入用户标记名：")
     if check_uname(uname):
         dd = check_dd(uname)
     else:
@@ -52,12 +52,23 @@ def get_v_log(uname):
     return __v_log
 
 
+def get_d_log(uname):
+    __d_log = 0
+    if os.path.exists("./user/{}/d_log".format(uname)):
+        with open("./user/{}/d_log".format(uname), "r", encoding="utf8") as fp:
+            __d_log = int(fp.read())
+    else:
+        with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
+            fp.write(str(__d_log))
+    return __d_log
+
+
 def shutdown(stime):
     if stime:
         stime = int(stime)
         os.system('shutdown -s -t {}'.format(stime))
         for i in range(stime):
-            print("\r{}秒后关机".format(stime-i), end="")
+            print("\r{}秒后关机".format(stime - i), end="")
             sleep(1)
     else:
         print("无自动关机任务，已释放程序内存，10分钟后窗口将自动关闭")

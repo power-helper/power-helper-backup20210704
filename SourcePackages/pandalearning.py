@@ -11,11 +11,10 @@ from pdlearn import get_links
 
 
 def user_flag(dd_status, uname):
-
     if False and dd_status:
         cookies = dingding.dd_login_status(uname, has_dd=True)
     else:
-        #if (input("是否保存钉钉帐户密码，保存后可后免登陆学习(Y/N) ")) not in ["y", "Y"]:
+        # if (input("是否保存钉钉帐户密码，保存后可后免登陆学习(Y/N) ")) not in ["y", "Y"]:
         if True:
             driver_login = mydriver.Mydriver(nohead=False)
             cookies = driver_login.login()
@@ -23,8 +22,9 @@ def user_flag(dd_status, uname):
             cookies = dingding.dd_login_status(uname)
     a_log = user.get_a_log(uname)
     v_log = user.get_v_log(uname)
+    d_log = user.get_d_log(uname)
 
-    return cookies, a_log, v_log
+    return cookies, a_log, v_log, d_log
 
 
 def get_argv():
@@ -50,7 +50,7 @@ def get_argv():
 def show_score(cookies):
     total, each = score.get_score(cookies)
     print("当前学习总积分：" + str(total))
-    print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6".format(*each))
+    print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6,每日答题:{}/6,每周答题:{}/5,专项答题:{}/10".format(*each))
     return total, each
 
 
@@ -86,7 +86,7 @@ def article(cookies, a_log, each):
         while True:
             if each[3] < 6 and try_count < 10:
                 num_time = 60
-                driver_article.get_url(links[a_log-1])
+                driver_article.get_url(links[a_log - 1])
                 time.sleep(random.randint(5, 15))
                 remaining = (6 - each[3]) * 4 * num_time
                 for i in range(remaining):
@@ -145,7 +145,7 @@ def video(cookies, v_log, each):
         while True:
             if each[4] < 6 and try_count < 10:
                 num_time = 60
-                driver_video.get_url(links[v_log-1])
+                driver_video.get_url(links[v_log - 1])
                 time.sleep(random.randint(5, 15))
                 remaining = (6 - each[4]) * 3 * num_time
                 for i in range(remaining):
@@ -172,6 +172,42 @@ def video(cookies, v_log, each):
         print("视频之前学完了")
 
 
+def daily(cookies, d_log, each):
+    if each[5] < 6:
+        driver_daily = mydriver.Mydriver(nohead=nohead)
+        driver_daily.get_url("https://www.xuexi.cn/notFound.html")
+        driver_daily.set_cookies(cookies)
+        links = get_links.get_daily_links()
+        try_count = 0
+        while True:
+            if each[0] < 6 and try_count < 10:
+                d_num = 6 - each[0]
+                for i in range(d_log, d_log + d_num):
+                    driver_daily.get_url(links[i])
+                    category = driver_daily.find_element_by_xpath('').get_attribute("name")
+                    time.sleep(random.randint(5, 15))
+
+                    print("\r每日答题中，题目剩余{}题,本篇剩余时间{}秒".format(d_log + d_num - i, 120 - j), end="")
+                    time.sleep(1)
+                    driver_daily.go_js('window.scrollTo(0, document.body.scrollHeight)')
+                    total, each = show_score(cookies)
+                    if each[0] >= 6:
+                        print("检测到每日答题分数已满,退出学习")
+                        break
+                d_log += d_num
+            else:
+                with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
+                    fp.write(str(d_log))
+                break
+        if try_count < 10:
+            print("每日答题完成")
+        else:
+            print("每日答题出现异常，请检查用户名下d_log文件记录数")
+        driver_daily.quit()
+    else:
+        print("每日答题之前学完了")
+
+
 if __name__ == '__main__':
     #  0 读取版本信息
     start_time = time.time()
@@ -179,7 +215,7 @@ if __name__ == '__main__':
     info_shread.start()
     #  1 创建用户标记，区分多个用户历史纪录
     dd_status, uname = user.get_user()
-    cookies, a_log, v_log = user_flag(dd_status, uname)
+    cookies, a_log, v_log, d_log = user_flag(dd_status, uname)
     total, each = show_score(cookies)
 
     nohead, lock, stime = get_argv()
@@ -189,5 +225,6 @@ if __name__ == '__main__':
     video_thread.start()
     article_thread.join()
     video_thread.join()
+    daily(cookies, d_log, each)
     print("总计用时" + str(int(time.time() - start_time) / 60) + "分钟")
     user.shutdown(stime)
