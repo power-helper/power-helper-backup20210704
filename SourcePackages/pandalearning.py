@@ -183,7 +183,9 @@ def daily(cookies, d_log, each):
             if each[5] < 6 and try_count < 10:
                 d_num = 6 - each[5]
                 driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
-                category = driver_daily.driver.find_element_by_xpath('').get_attribute("name")
+                driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div')
+                category = driver_daily.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]').text() #get_attribute("name")
+
                 tips = driver_daily._view_tips()
                 if not tips:
                     print("本题没有提示")
@@ -268,12 +270,13 @@ if __name__ == '__main__':
     total, each = show_score(cookies)
 
     nohead, lock, stime = get_argv()
+    '''
     article_thread = threads.MyThread("文章学习", article, cookies, a_log, each, lock=lock)
     video_thread = threads.MyThread("视频学习", video, cookies, v_log, each, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
-    video_thread.join()
+    video_thread.join()'''
     daily(cookies, d_log, each)
     print("总计用时" + str(int(time.time() - start_time) / 60) + "分钟")
     user.shutdown(stime)

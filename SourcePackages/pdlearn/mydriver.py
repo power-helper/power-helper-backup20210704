@@ -6,7 +6,13 @@ from selenium.webdriver.chrome.options import Options
 from pdlearn import user_agent
 import os
 import time
-
+import requests
+import random
+from urllib.parse import quote
+import re
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 class title_of_login:
     def __call__(self, driver):
@@ -137,6 +143,12 @@ class Mydriver:
     def quit(self):
         self.driver.quit()
 
+    def click_xpath(self, xpath):
+        self.condition = EC.visibility_of_element_located(
+            (By.XPATH, xpath))
+        WebDriverWait(driver=self.driver, timeout=15, poll_frequency=1).until(self.condition)
+        self.driver.find_element_by_xpath(xpath).click()
+
     def _view_tips(self):
         content = ""
         try:
@@ -164,3 +176,29 @@ class Mydriver:
             print("没有可点击的【X】按钮")
         time.sleep(2)
         return content
+    
+    def _search(self, content, options, exclude=''):
+        # 职责 网上搜索
+        print(f'搜索 {content} <exclude = {exclude}>')
+        print(f"选项 {options}")
+        content = re.sub(r'[\(（]出题单位.*', "", content)
+        if options[-1].startswith("以上") and chr(len(options)+64) not in exclude:
+            print(f'根据经验: {chr(len(options)+64)} 很可能是正确答案')
+            return chr(len(options)+64)
+        # url = quote('https://www.baidu.com/s?wd=' + content, safe=string.printable)
+        url = quote("https://www.sogou.com/web?query=" + content, safe=string.printable)
+        response = requests.get(url, headers=self.headers).text
+        counts = []
+        for i, option in zip(['A', 'B', 'C', 'D', 'E', 'F'], options):
+            count = response.count(option)
+            counts.append((count, i))
+            print(f'{i}. {option}: {count} 次')
+        counts = sorted(counts, key=lambda x:x[0], reverse=True)
+        counts = [x for x in counts if x[1] not in exclude]
+        c, i = counts[0]
+        if 0 == c:     
+            # 替换了百度引擎为搜狗引擎，结果全为零的机会应该会大幅降低       
+            _, i = random.choice(counts)
+            print(f'搜索结果全0，随机一个 {i}')
+        print(f'根据搜索结果: {i} 很可能是正确答案')
+        return i
