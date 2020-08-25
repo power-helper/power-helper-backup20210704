@@ -174,24 +174,73 @@ def video(cookies, v_log, each):
 
 def daily(cookies, d_log, each):
     if each[5] < 6:
-        driver_daily = mydriver.Mydriver(nohead=nohead)
+        # driver_daily = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
+        driver_daily = mydriver.Mydriver(nohead=False)
         driver_daily.get_url("https://www.xuexi.cn/notFound.html")
         driver_daily.set_cookies(cookies)
-        links = get_links.get_daily_links()
         try_count = 0
         while True:
-            if each[0] < 6 and try_count < 10:
-                d_num = 6 - each[0]
-                for i in range(d_log, d_log + d_num):
-                    driver_daily.get_url(links[i])
-                    category = driver_daily.find_element_by_xpath('').get_attribute("name")
-                    time.sleep(random.randint(5, 15))
+            if each[5] < 6 and try_count < 10:
+                d_num = 6 - each[5]
+                driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
+                category = driver_daily.driver.find_element_by_xpath('').get_attribute("name")
+                tips = driver_daily._view_tips()
+                if not tips:
+                    print("本题没有提示")
+                    if "填空题" == category:
+                        return None
+                    elif "多选题" == category:
+                        return "ABCDEFG"[:len(options)]
+                    elif "单选题" == category:
+                        return self._search(content, options, excludes)
+                    else:
+                        print("题目类型非法")
+                else:
+                    if "填空题" == category:
+                        dest = re.findall(r'.{0,2}\s+.{0,2}', content)
+                        print(f'dest: {dest}')
+                        if 1 == len(dest):
+                            dest = dest[0]
+                            print(f'单处填空题可以尝试正则匹配')
+                            pattern = re.sub(r'\s+', '(.+?)', dest)
+                            print(f'匹配模式 {pattern}')
+                            res = re.findall(pattern, tips)
+                            if 1 == len(res):
+                                return res[0]
+                        print(f'多处填空题难以预料结果，索性不处理')
+                        return None
 
-                    print("\r每日答题中，题目剩余{}题,本篇剩余时间{}秒".format(d_log + d_num - i, 120 - j), end="")
+                    elif "多选题" == category:
+                        check_res = [letter for letter, option in zip(letters, options) if option in tips]
+                        if len(check_res) > 1:
+                            print(f'根据提示，可选项有: {check_res}')
+                            return "".join(check_res)
+                        return "ABCDEFG"[:len(options)]
+                    elif "单选题" == category:
+                        radio_in_tips, radio_out_tips = "", ""
+                        for letter, option in zip(letters, options):
+                            if option in tips:
+                                print(f'{option} in tips')
+                                radio_in_tips += letter
+                            else:
+                                print(f'{option} out tips')
+                                radio_out_tips += letter
+
+                        print(f'含 {radio_in_tips} 不含 {radio_out_tips}')
+                        if 1 == len(radio_in_tips) and radio_in_tips not in excludes:
+                            print(f'根据提示 {radio_in_tips}')
+                            return radio_in_tips
+                        if 1 == len(radio_out_tips) and radio_out_tips not in excludes:
+                            print(f'根据提示 {radio_out_tips}')
+                            return radio_out_tips
+                        return self._search(content, options, excludes)
+                    else:
+                        print("题目类型非法")
+
+                    print("\r每日答题中，题目剩余{}题".format(d_log + d_num - i), end="")
                     time.sleep(1)
-                    driver_daily.go_js('window.scrollTo(0, document.body.scrollHeight)')
                     total, each = show_score(cookies)
-                    if each[0] >= 6:
+                    if each[5] >= 6:
                         print("检测到每日答题分数已满,退出学习")
                         break
                 d_log += d_num

@@ -5,6 +5,8 @@ from selenium.common import exceptions
 from selenium.webdriver.chrome.options import Options
 from pdlearn import user_agent
 import os
+import time
+
 
 class title_of_login:
     def __call__(self, driver):
@@ -15,6 +17,7 @@ class title_of_login:
             return True
         else:
             return False
+
 
 class Mydriver:
 
@@ -33,7 +36,7 @@ class Mydriver:
                 self.options.add_argument('--disable-gpu')
                 self.options.add_argument('--no-sandbox')
             self.options.add_argument('--mute-audio')  # 关闭声音
-            #self.options.add_argument('--window-size=400,500')
+            # self.options.add_argument('--window-size=400,500')
             self.options.add_argument('--window-size=900,800')
             self.options.add_argument('--window-position=700,0')
             self.options.add_argument('--log-level=3')
@@ -61,7 +64,6 @@ class Mydriver:
             print("=" * 120)
             raise
 
-
     def login(self):
         print("正在打开二维码登陆界面,请稍后")
         self.driver.get("https://pc.xuexi.cn/points/login.html")
@@ -88,7 +90,7 @@ class Mydriver:
             self.driver.execute_script('arguments[0].remove()', remover)
             self.driver.execute_script('window.scrollTo(document.body.scrollWidth/2 - 200 , 0)')
         try:
-            #WebDriverWait(self.driver, 270).until(EC.title_is(u"我的学习"))
+            # WebDriverWait(self.driver, 270).until(EC.title_is(u"我的学习"))
             WebDriverWait(self.driver, 270).until(title_of_login())
             cookies = self.get_cookies()
             return cookies
@@ -134,3 +136,31 @@ class Mydriver:
 
     def quit(self):
         self.driver.quit()
+
+    def _view_tips(self):
+        content = ""
+        try:
+            tips_open = self.driver.find_element_by_xpath('')
+            tips_open.click()
+        except Exception as e:
+            print("没有可点击的【查看提示】按钮")
+            return ""
+        time.sleep(2)
+        try:
+            tips = self.wait.until(EC.presence_of_element_located((
+                By.XPATH, ''
+            )))
+            content = tips.get_attribute("name")
+            print('提示 {content}')
+        except Exception as e:
+            print('无法查看提示内容')
+            return ""
+        time.sleep(2)
+        try:
+            tips_close = self.driver.find_element_by_xpath('')
+            tips_close.click()
+
+        except Exception as e:
+            print("没有可点击的【X】按钮")
+        time.sleep(2)
+        return content
