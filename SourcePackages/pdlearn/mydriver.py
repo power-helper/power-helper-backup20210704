@@ -47,8 +47,8 @@ class Mydriver:
                 self.options.add_argument('--disable-gpu')
                 self.options.add_argument('--no-sandbox')
             self.options.add_argument('--mute-audio')  # 关闭声音
-            # self.options.add_argument('--window-size=400,500')
-            self.options.add_argument('--window-size=900,800')
+            self.options.add_argument('--window-size=400,500')
+            # self.options.add_argument('--window-size=900,800')
             self.options.add_argument('--window-position=700,0')
             self.options.add_argument('--log-level=3')
 
@@ -87,14 +87,14 @@ class Mydriver:
             self.driver.execute_script('arguments[0].remove()', remover)
         try:
             remover = WebDriverWait(self.driver, 30, 0.2).until(
-                lambda driver: driver.find_element_by_class_name("header"))
+                lambda driver: driver.find_element_by_class_name("layout-header"))
         except exceptions.TimeoutException:
             print("当前网络缓慢...")
         else:
             self.driver.execute_script('arguments[0].remove()', remover)
         try:
             remover = WebDriverWait(self.driver, 30, 0.2).until(
-                lambda driver: driver.find_element_by_class_name("footer"))
+                lambda driver: driver.find_element_by_class_name("layout-footer"))
         except exceptions.TimeoutException:
             print("当前网络缓慢...")
         else:
