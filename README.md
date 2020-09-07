@@ -1,5 +1,7 @@
 **[在线聊天室地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
 
+**支持每日答题，支持每周答题，支持专项答题**
+
 **下载地址：https://github.com/TechXueXi/TechXueXi/releases**
 
 （如使用源码，请使用主分支。请勿使用 dev 分支，该分支仅用于同步开发）
