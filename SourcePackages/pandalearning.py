@@ -181,6 +181,10 @@ def daily(cookies, d_log, each):
     if each[5] < 6:
         # driver_daily = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_daily = mydriver.Mydriver(nohead=False)
+        driver_daily.driver.maximize_window()
+        print('请保持窗口最大化')
+        print('请保持窗口最大化')
+        print('请保持窗口最大化')
         driver_daily.get_url("https://www.xuexi.cn/notFound.html")
         driver_daily.set_cookies(cookies)
         try_count = 0
@@ -202,11 +206,14 @@ def daily(cookies, d_log, each):
                 if not tips:
                     print("本题没有提示")
                     if "填空题" in category:
-                        return None
+                        print('没有找到提示，暂时略过')
+                        continue
                     elif "多选题" in category:
-                        return "ABCDEFG"[:len(driver_daily.options)]
+                        print('没有找到提示，暂时略过')
+                        continue
                     elif "单选题" in category:
-                        print("单选题。无提示")
+                        print('没有找到提示，暂时略过')
+                        continue
                         #return driver_daily._search(driver_daily.content, driver_daily.options, driver_daily.excludes)
                     else:
                         print("题目类型非法")
@@ -295,6 +302,10 @@ def weekly(cookies, d_log, each):
     if each[6] < 5:
         # driver_weekly = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_weekly = mydriver.Mydriver(nohead=False)
+        driver_weekly.driver.maximize_window()
+        print('请保持窗口最大化')
+        print('请保持窗口最大化')
+        print('请保持窗口最大化')
         driver_weekly.get_url("https://www.xuexi.cn/notFound.html")
         driver_weekly.set_cookies(cookies)
         try_count = 0
@@ -327,12 +338,15 @@ def weekly(cookies, d_log, each):
                 if not tips:
                     print("本题没有提示")
                     if "填空题" in category:
-                        return None
+                        print('没有找到提示，暂时略过')
+                        continue
                     elif "多选题" in category:
-                        return "ABCDEFG"[:len(driver_weekly.options)]
+                        print('没有找到提示，暂时略过')
+                        continue
                     elif "单选题" in category:
-                        print("单选题。无提示")
-                        #return driver_weekly._search(driver_weekly.content, driver_weekly.options, driver_weekly.excludes)
+                        print('没有找到提示，暂时略过')
+                        continue
+                        # return driver_daily._search(driver_daily.content, driver_daily.options, driver_daily.excludes)
                     else:
                         print("题目类型非法")
                         break
@@ -420,6 +434,10 @@ def zhuanxiang(cookies, d_log, each):
     if each[7] < 10:
         # driver_zhuanxiang = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_zhuanxiang = mydriver.Mydriver(nohead=False)
+        driver_zhuanxiang.driver.maximize_window()
+        print('请保持窗口最大化')
+        print('请保持窗口最大化')
+        print('请保持窗口最大化')
         driver_zhuanxiang.get_url("https://www.xuexi.cn/notFound.html")
         driver_zhuanxiang.set_cookies(cookies)
         try_count = 0
@@ -449,12 +467,15 @@ def zhuanxiang(cookies, d_log, each):
                 if not tips:
                     print("本题没有提示")
                     if "填空题" in category:
-                        return None
+                        print('没有找到提示，暂时略过')
+                        continue
                     elif "多选题" in category:
-                        return "ABCDEFG"[:len(driver_zhuanxiang.options)]
+                        print('没有找到提示，暂时略过')
+                        continue
                     elif "单选题" in category:
-                        print("单选题。无提示")
-                        #return driver_zhuanxiang._search(driver_zhuanxiang.content, driver_zhuanxiang.options, driver_zhuanxiang.excludes)
+                        print('没有找到提示，暂时略过')
+                        continue
+                        # return driver_daily._search(driver_daily.content, driver_daily.options, driver_daily.excludes)
                     else:
                         print("题目类型非法")
                         break
@@ -549,13 +570,13 @@ if __name__ == '__main__':
     cookies, a_log, v_log, d_log = user_flag(dd_status, uname)
     total, each = show_score(cookies)
     nohead, lock, stime = get_argv()
-    '''
+
     article_thread = threads.MyThread("文章学习", article, cookies, a_log, each, lock=lock)
     video_thread = threads.MyThread("视频学习", video, cookies, v_log, each, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
-    video_thread.join()'''
+    video_thread.join()
     daily(cookies, d_log, each)
     weekly(cookies, d_log, each)
     zhuanxiang(cookies, d_log, each)

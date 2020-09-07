@@ -214,7 +214,7 @@ class Mydriver:
             tips_close = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')
             tips_close.click()
         except Exception as e:
-            print("没有可点击的【X】按钮")
+            print("没有可点击的【关闭提示】按钮")
         time.sleep(2)
         return answer
 
