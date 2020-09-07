@@ -62,16 +62,17 @@ def article(cookies, a_log, each):
         driver_article.set_cookies(cookies)
         links = get_links.get_article_links()
         try_count = 0
+        readarticle_time = 0
         while True:
             if each[0] < 6 and try_count < 10:
                 a_num = 6 - each[0]
                 for i in range(a_log, a_log + a_num):
                     driver_article.get_url(links[i])
-                    time.sleep(random.randint(5, 15))
-                    for j in range(120):
+                    readarticle_time = 60 + random.randint(5, 15)
+                    for j in range(readarticle_time):
                         if random.random() > 0.5:
                             driver_article.go_js('window.scrollTo(0, document.body.scrollHeight/120*{})'.format(j))
-                        print("\r文章学习中，文章剩余{}篇,本篇剩余时间{}秒".format(a_log + a_num - i, 120 - j), end="")
+                        print("\r文章学习中，文章剩余{}篇,本篇剩余时间{}秒".format(a_log + a_num - i, readarticle_time - j), end="")
                         time.sleep(1)
                     driver_article.go_js('window.scrollTo(0, document.body.scrollHeight)')
                     total, each = show_score(cookies)
@@ -88,15 +89,14 @@ def article(cookies, a_log, each):
             if each[3] < 6 and try_count < 10:
                 num_time = 60
                 driver_article.get_url(links[a_log - 1])
-                time.sleep(random.randint(5, 15))
-                remaining = (6 - each[3]) * 4 * num_time
+                remaining = (6 - each[3]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
                         driver_article.go_js(
                             'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i))
                     print("\r文章时长学习中，文章总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
-                    if i % (120) == 0 and i != remaining:
+                    if i % (60) == 0 and i != remaining:
                         total, each = show_score(cookies)
                         if each[3] >= 6:
                             print("检测到文章时长分数已满,退出学习")
@@ -121,16 +121,17 @@ def video(cookies, v_log, each):
         driver_video.set_cookies(cookies)
         links = get_links.get_video_links()
         try_count = 0
+        watchvideo_time = 0
         while True:
             if each[1] < 6 and try_count < 10:
                 v_num = 6 - each[1]
                 for i in range(v_log, v_log + v_num):
                     driver_video.get_url(links[i])
-                    time.sleep(random.randint(5, 15))
-                    for j in range(180):
+                    watchvideo_time = 60 + random.randint(5, 15)
+                    for j in range(watchvideo_time):
                         if random.random() > 0.5:
                             driver_video.go_js('window.scrollTo(0, document.body.scrollHeight/180*{})'.format(j))
-                        print("\r视频学习中，视频剩余{}个,本次剩余时间{}秒".format(v_log + v_num - i, 180 - j), end="")
+                        print("\r视频学习中，视频剩余{}个,本次剩余时间{}秒".format(v_log + v_num - i, watchvideo_time - j), end="")
                         time.sleep(1)
                     driver_video.go_js('window.scrollTo(0, document.body.scrollHeight)')
                     total, each = show_score(cookies)
@@ -147,15 +148,14 @@ def video(cookies, v_log, each):
             if each[4] < 6 and try_count < 10:
                 num_time = 60
                 driver_video.get_url(links[v_log - 1])
-                time.sleep(random.randint(5, 15))
-                remaining = (6 - each[4]) * 3 * num_time
+                remaining = (6 - each[4]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
                         driver_video.go_js(
                             'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i))
                     print("\r视频学习中，视频总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
-                    if i % (180) == 0 and i != remaining:
+                    if i % (60) == 0 and i != remaining:
                         total, each = show_score(cookies)
                         if each[4] >= 6:
                             print("检测到视频时长分数已满,退出学习")
@@ -172,10 +172,12 @@ def video(cookies, v_log, each):
     else:
         print("视频之前学完了")
 
+
 def check_delay():
-    delay_time=random.randint(2, 5)
-    print('等待 ',delay_time,' 秒')
+    delay_time = random.randint(2, 5)
+    print('等待 ', delay_time, ' 秒')
     time.sleep(delay_time)
+
 
 def daily(cookies, d_log, each):
     if each[5] < 6:
@@ -189,14 +191,15 @@ def daily(cookies, d_log, each):
         driver_daily.set_cookies(cookies)
         try_count = 0
 
-        if each[5] < 6 :
+        if each[5] < 6:
             d_num = 6 - each[5]
             letters = list("ABCDEFGHIJKLMN")
             driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div')
-            while each[5] < 6 :
+            while each[5] < 6:
                 try:
-                    category = driver_daily.xpath_getText('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]') #get_attribute("name")
+                    category = driver_daily.xpath_getText(
+                        '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
                 except Exception as e:
                     print('查找元素失败！')
                     break
@@ -214,41 +217,41 @@ def daily(cookies, d_log, each):
                     elif "单选题" in category:
                         print('没有找到提示，暂时略过')
                         continue
-                        #return driver_daily._search(driver_daily.content, driver_daily.options, driver_daily.excludes)
+                        # return driver_daily._search(driver_daily.content, driver_daily.options, driver_daily.excludes)
                     else:
                         print("题目类型非法")
                         break
                 else:
                     if "填空题" in category:
-                        answer=tips
+                        answer = tips
                         driver_daily.fill_in_blank(answer)
 
                     elif "多选题" in category:
-                        options=driver_daily.radio_get_options()
+                        options = driver_daily.radio_get_options()
                         radio_in_tips, radio_out_tips = "", ""
                         for letter, option in zip(letters, options):
                             for tip in tips:
                                 if tip in option:
-                                    #print(f'{option} in tips')
+                                    # print(f'{option} in tips')
                                     if letter not in radio_in_tips:
                                         radio_in_tips += letter
                                 else:
-                                    #print(f'{option} out tips')
+                                    # print(f'{option} out tips')
                                     if letter not in radio_out_tips:
                                         radio_out_tips += letter
 
                         print('含 ', radio_in_tips, '不含', radio_out_tips)
-                        if len(radio_in_tips)>1:  # and radio_in_tips not in driver_daily.excludes:
+                        if len(radio_in_tips) > 1:  # and radio_in_tips not in driver_daily.excludes:
                             print('根据提示', radio_in_tips)
                             driver_daily.radio_check(radio_in_tips)
-                        elif len(radio_out_tips)>1:  # and radio_out_tips not in excludes
+                        elif len(radio_out_tips) > 1:  # and radio_out_tips not in excludes
                             print('根据提示', radio_out_tips)
                             driver_daily.radio_check(radio_out_tips)
                         # return driver_daily._search(content, options, excludes)
                         else:
                             print('无法根据提示判断，准备搜索……')
                     elif "单选题" in category:
-                        options=driver_daily.radio_get_options()
+                        options = driver_daily.radio_get_options()
                         radio_in_tips, radio_out_tips = "", ""
                         '''
                         option_elements = driver_daily.wait.until(driver_daily.EC.presence_of_all_elements_located(
@@ -266,20 +269,20 @@ def daily(cookies, d_log, each):
                                     if letter not in radio_out_tips:
                                         radio_out_tips += letter
 
-                        print('含 ',radio_in_tips,'不含',radio_out_tips)
-                        if 1 == len(radio_in_tips): #and radio_in_tips not in driver_daily.excludes:
-                            print('根据提示' ,radio_in_tips)
+                        print('含 ', radio_in_tips, '不含', radio_out_tips)
+                        if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_daily.excludes:
+                            print('根据提示', radio_in_tips)
                             driver_daily.radio_check(radio_in_tips)
-                        elif 1 == len(radio_out_tips):# and radio_out_tips not in excludes
+                        elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
                             print('根据提示', radio_out_tips)
                             driver_daily.radio_check(radio_out_tips)
-                        #return driver_daily._search(content, options, excludes)
+                        # return driver_daily._search(content, options, excludes)
                         else:
                             print('无法根据提示判断，准备搜索……')
                     else:
                         print("题目类型非法")
                         break
-                    #print("\r每日答题中，题目剩余{}题".format(d_log + d_num - i), end="")
+                    # print("\r每日答题中，题目剩余{}题".format(d_log + d_num - i), end="")
                     time.sleep(1)
                 d_log += d_num
 
@@ -290,14 +293,15 @@ def daily(cookies, d_log, each):
         else:
             with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
                 fp.write(str(d_log))
-            #break
+            # break
         try:
             driver_daily.quit()
         except Exception as e:
             print('……')
     else:
         print("每日答题之前学完了")
-        
+
+
 def weekly(cookies, d_log, each):
     if each[6] < 5:
         # driver_weekly = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
@@ -310,25 +314,30 @@ def weekly(cookies, d_log, each):
         driver_weekly.set_cookies(cookies)
         try_count = 0
 
-        if each[6] < 5 :
+        if each[6] < 5:
             d_num = 6 - each[5]
             letters = list("ABCDEFGHIJKLMN")
             driver_weekly.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_weekly.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div')
             time.sleep(2)
-            flag=1
-            for tem in range(0,40):
+            flag = 1
+            for tem in range(0, 40):
                 for tem2 in range(0, 5):
                     try:
-                        temword=driver_weekly.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div/div['+str(tem+1)+']/div[2]/div['+str(tem2+1)+']/button').text
+                        temword = driver_weekly.driver.find_element_by_xpath(
+                            '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
+                                tem2 + 1) + ']/button').text
                     except:
-                        temword=''
-                    if flag==1 and ('开始答题' in temword):
-                        driver_weekly.click_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div/div['+str(tem+1)+']/div[2]/div['+str(tem2+1)+']/button')
-                        flag=0
+                        temword = ''
+                    if flag == 1 and ('开始答题' in temword):
+                        driver_weekly.click_xpath(
+                            '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
+                                tem2 + 1) + ']/button')
+                        flag = 0
             while each[6] < 5 and try_count < 10:
                 try:
-                    category = driver_weekly.xpath_getText('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]') #get_attribute("name")
+                    category = driver_weekly.xpath_getText(
+                        '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
                 except Exception as e:
                     print('查找元素失败！')
                     break
@@ -352,11 +361,11 @@ def weekly(cookies, d_log, each):
                         break
                 else:
                     if "填空题" in category:
-                        answer=tips
+                        answer = tips
                         driver_weekly.fill_in_blank(answer)
 
                     elif "多选题" in category:
-                        options=driver_weekly.radio_get_options()
+                        options = driver_weekly.radio_get_options()
                         radio_in_tips, radio_out_tips = "", ""
                         for letter, option in zip(letters, options):
                             for tip in tips:
@@ -370,17 +379,17 @@ def weekly(cookies, d_log, each):
                                         radio_out_tips += letter
 
                         print('含 ', radio_in_tips, '不含', radio_out_tips)
-                        if len(radio_in_tips)>1:  # and radio_in_tips not in driver_weekly.excludes:
+                        if len(radio_in_tips) > 1:  # and radio_in_tips not in driver_weekly.excludes:
                             print('根据提示', radio_in_tips)
                             driver_weekly.radio_check(radio_in_tips)
-                        elif len(radio_out_tips)>1:  # and radio_out_tips not in excludes
+                        elif len(radio_out_tips) > 1:  # and radio_out_tips not in excludes
                             print('根据提示', radio_out_tips)
                             driver_weekly.radio_check(radio_out_tips)
                         # return driver_weekly._search(content, options, excludes)
                         else:
                             print('无法根据提示判断，准备搜索……')
                     elif "单选题" in category:
-                        options=driver_weekly.radio_get_options()
+                        options = driver_weekly.radio_get_options()
                         radio_in_tips, radio_out_tips = "", ""
                         '''
                         option_elements = driver_weekly.wait.until(driver_weekly.EC.presence_of_all_elements_located(
@@ -398,20 +407,20 @@ def weekly(cookies, d_log, each):
                                     if letter not in radio_out_tips:
                                         radio_out_tips += letter
 
-                        print('含 ',radio_in_tips,'不含',radio_out_tips)
-                        if 1 == len(radio_in_tips): #and radio_in_tips not in driver_weekly.excludes:
-                            print('根据提示' ,radio_in_tips)
+                        print('含 ', radio_in_tips, '不含', radio_out_tips)
+                        if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_weekly.excludes:
+                            print('根据提示', radio_in_tips)
                             driver_weekly.radio_check(radio_in_tips)
-                        elif 1 == len(radio_out_tips):# and radio_out_tips not in excludes
+                        elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
                             print('根据提示', radio_out_tips)
                             driver_weekly.radio_check(radio_out_tips)
-                        #return driver_weekly._search(content, options, excludes)
+                        # return driver_weekly._search(content, options, excludes)
                         else:
                             print('无法根据提示判断，准备搜索……')
                     else:
                         print("题目类型非法")
                         break
-                    #print("\r每周答题中，题目剩余{}题".format(d_log + d_num - i), end="")
+                    # print("\r每周答题中，题目剩余{}题".format(d_log + d_num - i), end="")
                     time.sleep(1)
                 d_log += d_num
 
@@ -422,14 +431,15 @@ def weekly(cookies, d_log, each):
         else:
             with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
                 fp.write(str(d_log))
-            #break
+            # break
         try:
             driver_weekly.quit()
         except Exception as e:
             print('……')
     else:
         print("每周答题之前学完了")
-        
+
+
 def zhuanxiang(cookies, d_log, each):
     if each[7] < 10:
         # driver_zhuanxiang = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
@@ -442,22 +452,25 @@ def zhuanxiang(cookies, d_log, each):
         driver_zhuanxiang.set_cookies(cookies)
         try_count = 0
 
-        if each[7] < 10 :
+        if each[7] < 10:
             d_num = 10 - each[5]
             letters = list("ABCDEFGHIJKLMN")
             driver_zhuanxiang.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_zhuanxiang.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[7]/div[2]/div[2]/div')
             time.sleep(2)
-            for tem in range(0,40):
+            for tem in range(0, 40):
                 try:
-                    temword = driver_zhuanxiang.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div['+str(tem+1)+']/div[2]/button').text
+                    temword = driver_zhuanxiang.driver.find_element_by_xpath(
+                        '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button').text
                 except:
                     temword = ''
                 if '开始答题' in temword:
-                    driver_zhuanxiang.click_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div['+str(tem+1)+']/div[2]/button')
+                    driver_zhuanxiang.click_xpath(
+                        '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
             while each[7] < 10:
                 try:
-                    category = driver_zhuanxiang.xpath_getText('//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[1]') #get_attribute("name")
+                    category = driver_zhuanxiang.xpath_getText(
+                        '//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[1]')  # get_attribute("name")
                 except Exception as e:
                     print('查找元素失败！')
                     break
@@ -481,11 +494,11 @@ def zhuanxiang(cookies, d_log, each):
                         break
                 else:
                     if "填空题" in category:
-                        answer=tips
+                        answer = tips
                         driver_zhuanxiang.zhuanxiang_fill_in_blank(answer)
 
                     elif "多选题" in category:
-                        options=driver_zhuanxiang.radio_get_options()
+                        options = driver_zhuanxiang.radio_get_options()
                         radio_in_tips, radio_out_tips = "", ""
                         for letter, option in zip(letters, options):
                             for tip in tips:
@@ -499,17 +512,17 @@ def zhuanxiang(cookies, d_log, each):
                                         radio_out_tips += letter
 
                         print('含 ', radio_in_tips, '不含', radio_out_tips)
-                        if len(radio_in_tips)>1:  # and radio_in_tips not in driver_zhuanxiang.excludes:
+                        if len(radio_in_tips) > 1:  # and radio_in_tips not in driver_zhuanxiang.excludes:
                             print('根据提示', radio_in_tips)
                             driver_zhuanxiang.radio_check(radio_in_tips)
-                        elif len(radio_out_tips)>1:  # and radio_out_tips not in excludes
+                        elif len(radio_out_tips) > 1:  # and radio_out_tips not in excludes
                             print('根据提示', radio_out_tips)
                             driver_zhuanxiang.radio_check(radio_out_tips)
                         # return driver_zhuanxiang._search(content, options, excludes)
                         else:
                             print('无法根据提示判断，准备搜索……')
                     elif "单选题" in category:
-                        options=driver_zhuanxiang.radio_get_options()
+                        options = driver_zhuanxiang.radio_get_options()
                         radio_in_tips, radio_out_tips = "", ""
                         '''
                         option_elements = driver_zhuanxiang.wait.until(driver_zhuanxiang.EC.presence_of_all_elements_located(
@@ -527,20 +540,20 @@ def zhuanxiang(cookies, d_log, each):
                                     if letter not in radio_out_tips:
                                         radio_out_tips += letter
 
-                        print('含 ',radio_in_tips,'不含',radio_out_tips)
-                        if 1 == len(radio_in_tips): #and radio_in_tips not in driver_zhuanxiang.excludes:
-                            print('根据提示' ,radio_in_tips)
+                        print('含 ', radio_in_tips, '不含', radio_out_tips)
+                        if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_zhuanxiang.excludes:
+                            print('根据提示', radio_in_tips)
                             driver_zhuanxiang.radio_check(radio_in_tips)
-                        elif 1 == len(radio_out_tips):# and radio_out_tips not in excludes
+                        elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
                             print('根据提示', radio_out_tips)
                             driver_zhuanxiang.radio_check(radio_out_tips)
-                        #return driver_zhuanxiang._search(content, options, excludes)
+                        # return driver_zhuanxiang._search(content, options, excludes)
                         else:
                             print('无法根据提示判断，准备搜索……')
                     else:
                         print("题目类型非法")
                         break
-                    #print("\r专项答题中，题目剩余{}题".format(d_log + d_num - i), end="")
+                    # print("\r专项答题中，题目剩余{}题".format(d_log + d_num - i), end="")
                     time.sleep(1)
                 d_log += d_num
 
@@ -551,7 +564,7 @@ def zhuanxiang(cookies, d_log, each):
         else:
             with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
                 fp.write(str(d_log))
-            #break
+            # break
         try:
             driver_zhuanxiang.quit()
         except Exception as e:
@@ -571,14 +584,15 @@ if __name__ == '__main__':
     total, each = show_score(cookies)
     nohead, lock, stime = get_argv()
 
+    daily(cookies, d_log, each)
+    weekly(cookies, d_log, each)
+    zhuanxiang(cookies, d_log, each)
+
     article_thread = threads.MyThread("文章学习", article, cookies, a_log, each, lock=lock)
     video_thread = threads.MyThread("视频学习", video, cookies, v_log, each, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
     video_thread.join()
-    daily(cookies, d_log, each)
-    weekly(cookies, d_log, each)
-    zhuanxiang(cookies, d_log, each)
     print("总计用时" + str(int(time.time() - start_time) / 60) + "分钟")
     user.shutdown(stime)

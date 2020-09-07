@@ -1,4 +1,6 @@
-**[在线聊天室试运行，地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+**[在线聊天室地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+
+**支持每日答题，支持每周答题，支持专项答题**
 
 **下载地址：https://github.com/TechXueXi/TechXueXi/releases**
 
@@ -23,11 +25,11 @@
 
 如您开发了其他“科技强国”项目，也可以加入本组织，相互交流，共同维护生态。
 
-您还可以选用配置比较复杂的但37分/天同类产品：https://github.com/TechXueXi/AutoXue
+
 
 # TechXueXi
 
-TechXueXi 是一款使用python语言编写的学习工具。25分/天
+TechXueXi 是一款使用python语言编写的学习工具。可达 47 分/天
 
 
 
