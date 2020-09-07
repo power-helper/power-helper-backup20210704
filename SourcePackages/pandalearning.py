@@ -61,16 +61,17 @@ def article(cookies, a_log, each):
         driver_article.set_cookies(cookies)
         links = get_links.get_article_links()
         try_count = 0
+        readarticle_time = 0
         while True:
             if each[0] < 6 and try_count < 10:
                 a_num = 6 - each[0]
                 for i in range(a_log, a_log + a_num):
                     driver_article.get_url(links[i])
-                    time.sleep(random.randint(5, 15))
-                    for j in range(120):
+                    readarticle_time = 60+random.randint(5, 15)
+                    for j in range(readarticle_time):
                         if random.random() > 0.5:
                             driver_article.go_js('window.scrollTo(0, document.body.scrollHeight/120*{})'.format(j))
-                        print("\r文章学习中，文章剩余{}篇,本篇剩余时间{}秒".format(a_log + a_num - i, 120 - j), end="")
+                        print("\r文章学习中，文章剩余{}篇,本篇剩余时间{}秒".format(a_log + a_num - i, readarticle_time - j), end="")
                         time.sleep(1)
                     driver_article.go_js('window.scrollTo(0, document.body.scrollHeight)')
                     total, each = show_score(cookies)
@@ -87,15 +88,14 @@ def article(cookies, a_log, each):
             if each[3] < 6 and try_count < 10:
                 num_time = 60
                 driver_article.get_url(links[a_log - 1])
-                time.sleep(random.randint(5, 15))
-                remaining = (6 - each[3]) * 4 * num_time
+                remaining = (6 - each[3]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
                         driver_article.go_js(
                             'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i))
                     print("\r文章时长学习中，文章总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
-                    if i % (120) == 0 and i != remaining:
+                    if i % (60) == 0 and i != remaining:
                         total, each = show_score(cookies)
                         if each[3] >= 6:
                             print("检测到文章时长分数已满,退出学习")
@@ -120,16 +120,17 @@ def video(cookies, v_log, each):
         driver_video.set_cookies(cookies)
         links = get_links.get_video_links()
         try_count = 0
+        watchvideo_time = 0
         while True:
             if each[1] < 6 and try_count < 10:
                 v_num = 6 - each[1]
                 for i in range(v_log, v_log + v_num):
                     driver_video.get_url(links[i])
-                    time.sleep(random.randint(5, 15))
-                    for j in range(180):
+                    watchvideo_time = 60+random.randint(5, 15)
+                    for j in range(watchvideo_time):
                         if random.random() > 0.5:
                             driver_video.go_js('window.scrollTo(0, document.body.scrollHeight/180*{})'.format(j))
-                        print("\r视频学习中，视频剩余{}个,本次剩余时间{}秒".format(v_log + v_num - i, 180 - j), end="")
+                        print("\r视频学习中，视频剩余{}个,本次剩余时间{}秒".format(v_log + v_num - i, watchvideo_time - j), end="")
                         time.sleep(1)
                     driver_video.go_js('window.scrollTo(0, document.body.scrollHeight)')
                     total, each = show_score(cookies)
@@ -146,15 +147,14 @@ def video(cookies, v_log, each):
             if each[4] < 6 and try_count < 10:
                 num_time = 60
                 driver_video.get_url(links[v_log - 1])
-                time.sleep(random.randint(5, 15))
-                remaining = (6 - each[4]) * 3 * num_time
+                remaining = (6 - each[4]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
                         driver_video.go_js(
                             'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i))
                     print("\r视频学习中，视频总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
-                    if i % (180) == 0 and i != remaining:
+                    if i % (60) == 0 and i != remaining:
                         total, each = show_score(cookies)
                         if each[4] >= 6:
                             print("检测到视频时长分数已满,退出学习")
