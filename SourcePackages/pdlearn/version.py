@@ -3,7 +3,7 @@ import requests
 
 def up_info():
     print("\n正在联网获取更新信息...")
-    __Version = "v20200907"
+    __Version = "v20200907-2"
     __INFO = "TechXueXi最新下载地址为 https://github.com/TechXueXi/TechXueXi"
     try:
         updata_log = requests.get(
