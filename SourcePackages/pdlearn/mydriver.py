@@ -74,14 +74,14 @@ class Mydriver:
             self.driver.execute_script('arguments[0].remove()', remover)
         try:
             remover = WebDriverWait(self.driver, 30, 0.2).until(
-                lambda driver: driver.find_element_by_class_name("header"))
+                lambda driver: driver.find_element_by_class_name("layout-header"))
         except exceptions.TimeoutException:
             print("当前网络缓慢...")
         else:
             self.driver.execute_script('arguments[0].remove()', remover)
         try:
             remover = WebDriverWait(self.driver, 30, 0.2).until(
-                lambda driver: driver.find_element_by_class_name("footer"))
+                lambda driver: driver.find_element_by_class_name("layout-footer"))
         except exceptions.TimeoutException:
             print("当前网络缓慢...")
         else:
@@ -123,7 +123,10 @@ class Mydriver:
         return cookies
 
     def set_cookies(self, cookies):
+        self.driver.delete_all_cookies()
         for cookie in cookies:
+            if 'expiry' in cookie:
+                del cookie['expiry']
             self.driver.add_cookie({k: cookie[k] for k in cookie.keys()})
 
     def get_url(self, url):
@@ -134,3 +137,12 @@ class Mydriver:
 
     def quit(self):
         self.driver.quit()
+
+    def find_element_by_xpath(self,xapth):
+        self.driver.find_element_by_xpath(xapth)
+
+    def find_elements_by_tag_name(self,tagname):
+        self.driver.find_element_by_tag_name(tagname)
+
+    def find_elements_by_class_name(self,name):
+        self.driver.find_elements_by_class_name(name)

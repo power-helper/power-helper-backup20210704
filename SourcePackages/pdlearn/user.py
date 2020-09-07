@@ -51,6 +51,25 @@ def get_v_log(uname):
             fp.write(str(__v_log))
     return __v_log
 
+def get_zx_log(uname):
+    __zx_log = 0
+    if os.path.exists("./user/{}/zx_log".format(uname)):
+        with open("./user/{}/zx_log".format(uname), "r", encoding="utf8") as fp:
+            __zx_log = int(fp.read())
+    else:
+        with open("./user/{}/zx_log".format(uname), "w", encoding="utf8") as fp:
+            fp.write(str(__zx_log))
+    return __zx_log
+
+def get_mr_log(uname):
+    __mr_log = 0
+    if os.path.exists("./user/{}/mr_log".format(uname)):
+        with open("./user/{}/mr_log".format(uname), "r", encoding="utf8") as fp:
+            __mr_log = int(fp.read())
+    else:
+        with open("./user/{}/mr_log".format(uname), "w", encoding="utf8") as fp:
+            fp.write(str(__mr_log))
+    return __mr_log
 
 def shutdown(stime):
     if stime:
