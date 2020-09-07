@@ -42,4 +42,3 @@ def load_dingding(user_path):
         except:
             print("钉钉记录文件损坏，错误代码3程序退出")
             sys.exit(3)
-

@@ -1,4 +1,4 @@
-**[在线聊天室试运行，地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+**[在线聊天室地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
 
 **下载地址：https://github.com/TechXueXi/TechXueXi/releases**
 
