@@ -98,4 +98,5 @@ def getheaders():
     ]
     UserAgent = random.choice(user_agent_list_1) # 这里只用list1
     headers = {'User-Agent': UserAgent}
+    #headers = {'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"}
     return headers

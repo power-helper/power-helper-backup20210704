@@ -1,9 +1,13 @@
+from typing import List, Any
+
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 from selenium.webdriver.chrome.options import Options
 from pdlearn import user_agent
+from bs4 import BeautifulSoup
+import lxml
 import os
 import time
 import requests
@@ -144,39 +148,138 @@ class Mydriver:
         self.driver.quit()
 
     def click_xpath(self, xpath):
+        try:
+            self.condition = EC.visibility_of_element_located(
+                (By.XPATH, xpath))
+            WebDriverWait(driver=self.driver, timeout=15, poll_frequency=1).until(self.condition)
+        except Exception as e:
+            print('一点小问题：',e)
+        self.driver.find_element_by_xpath(xpath).click()
+
+    def xpath_getText(self, xpath):
         self.condition = EC.visibility_of_element_located(
             (By.XPATH, xpath))
         WebDriverWait(driver=self.driver, timeout=15, poll_frequency=1).until(self.condition)
-        self.driver.find_element_by_xpath(xpath).click()
+        return self.driver.find_element_by_xpath(xpath).text
+
+    def check_delay(self):
+        delay_time = random.randint(2, 15)
+        print('等待 ', delay_time, ' 秒')
+        time.sleep(delay_time)
 
     def _view_tips(self):
         content = ""
         try:
-            tips_open = self.driver.find_element_by_xpath('')
+            #tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
+            tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
             tips_open.click()
+            print("有可点击的【查看提示】按钮")
         except Exception as e:
             print("没有可点击的【查看提示】按钮")
             return ""
         time.sleep(2)
         try:
-            tips = self.wait.until(EC.presence_of_element_located((
-                By.XPATH, ''
-            )))
-            content = tips.get_attribute("name")
-            print('提示 {content}')
+            # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
+            tips_open = self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
+            tips_open.click()
+        except Exception as e:
+            print("关闭查看提示失败！")
+            return ""
+        try:
+            html=self.driver.page_source
+            soup1=BeautifulSoup(html,'lxml')
+            content = soup1.find_all('font')#tips.get_attribute("name") ,attrs={'color'}
+            answer: List[str]=[]
+        except Exception as e:
+            print('page_source failed')
+            print(e)
+        try:
+            for i in content:
+                answer.append(i.text)
+                '''
+            if len(answer) >= 2:
+                answer=str.join(answer)
+            if (',' or '.' or '，' or '。' or '、') in answer:
+                answer=re.split(",|，|.|。|、",answer)
+                '''
+            print('获取提示：',answer)
         except Exception as e:
             print('无法查看提示内容')
+            print(e)
             return ""
         time.sleep(2)
-        try:
-            tips_close = self.driver.find_element_by_xpath('')
-            tips_close.click()
 
+        try:
+            tips_close = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')
+            tips_close.click()
         except Exception as e:
             print("没有可点击的【X】按钮")
         time.sleep(2)
-        return content
-    
+        return answer
+
+    def radio_get_options(self):
+        html = self.driver.page_source
+        soup1 = BeautifulSoup(html, 'lxml')
+        content = soup1.find_all('div', attrs={'class': 'q-answer choosable'})
+        options=[]
+        for i in content:
+            options.append(i.text)
+        print('获取选项：', options)
+        return options
+
+    def radio_check(self,check_options):
+        for check_option in check_options:
+            try:
+                self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/div[contains(text(), "'+check_option+'")]').click()
+            except Exception as e:
+                print("点击",check_option,'失败！')
+        self.check_delay()
+        try:
+            self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button').click()
+            #self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button[contains(text(), "确")]').click()
+        except Exception as e:
+            print("点击 确定 进入下一题失败！报错：")
+            print(e)
+
+    def blank_get(self):
+        html = self.driver.page_source
+        soup1 = BeautifulSoup(html, 'lxml')
+        content = soup1.find_all('div', attrs={'class': 'q-body'})
+        print('原始',content)
+        content=soup1.find('div', attrs={'class': 'q-body'}).getText()
+        print(content)
+        #content1=content.text
+        dest = re.findall(r'.{0,2}\s+.{0,2}', content)
+        print('填空反馈')
+        print(dest)
+
+    def fill_in_blank(self,answer):
+        for i in range(0,len(answer)):
+            self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[2]/div/input['+str(i+1)+']').send_keys(answer[i])
+        self.check_delay()
+        try:
+            self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button').click()
+            #self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button[contains(text(), "确")]').click()
+        except Exception as e:
+            print("点击 确定 进入下一题失败！报错：")
+            print(e)
+
+    def zhuanxiang_fill_in_blank(self,answer):
+        for i in range(0,len(answer)):
+            self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[2]/div/input['+str(i+1)+']').send_keys(answer[i])
+        self.check_delay()
+        try:
+            self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]').click()
+        except:
+            print('未找到交卷按钮，继续做题')
+        try:
+            self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button').click()
+            #self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button[contains(text(), "确")]').click()
+        except Exception as e:
+            print("点击 确定 进入下一题失败！报错：")
+            print(e)
+
     def _search(self, content, options, exclude=''):
         # 职责 网上搜索
         print(f'搜索 {content} <exclude = {exclude}>')
