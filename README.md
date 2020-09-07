@@ -23,11 +23,11 @@
 
 如您开发了其他“科技强国”项目，也可以加入本组织，相互交流，共同维护生态。
 
-您还可以选用配置比较复杂的但37分/天同类产品：https://github.com/TechXueXi/AutoXue
+
 
 # TechXueXi
 
-TechXueXi 是一款使用python语言编写的学习工具。25分/天
+TechXueXi 是一款使用python语言编写的学习工具。可达 47 分/天
 
 
 

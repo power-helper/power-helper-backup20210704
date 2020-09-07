@@ -584,14 +584,15 @@ if __name__ == '__main__':
     total, each = show_score(cookies)
     nohead, lock, stime = get_argv()
 
+    daily(cookies, d_log, each)
+    weekly(cookies, d_log, each)
+    zhuanxiang(cookies, d_log, each)
+
     article_thread = threads.MyThread("文章学习", article, cookies, a_log, each, lock=lock)
     video_thread = threads.MyThread("视频学习", video, cookies, v_log, each, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
     video_thread.join()
-    daily(cookies, d_log, each)
-    weekly(cookies, d_log, each)
-    zhuanxiang(cookies, d_log, each)
     print("总计用时" + str(int(time.time() - start_time) / 60) + "分钟")
     user.shutdown(stime)
