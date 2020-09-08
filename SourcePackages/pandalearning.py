@@ -88,7 +88,6 @@ def article(cookies, a_log, each):
             if each[3] < 6 and try_count < 10:
                 num_time = 60
                 driver_article.get_url(links[a_log - 1])
-                
                 remaining = (6 - each[3]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
