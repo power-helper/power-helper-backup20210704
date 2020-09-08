@@ -15,6 +15,8 @@ def get_score(cookies):
                             headers={'Cache-Control': 'no-cache'}).content.decode(
             "utf8")
         each1 = json.loads(each1, encoding="utf8")["data"]["dayScoreDtos"]
+
+        ##### 待优化
         each1 = [int(i["currentScore"]) for i in each1 if i["ruleId"] in [1, 2, 9, 1002, 1003,6, 5, 4]]
         each = [0,0,0,0,0,0,0,0]
         each[0]=each1[0]
@@ -25,7 +27,9 @@ def get_score(cookies):
         each[5]=each1[4]
         each[6]=each1[3]
         each[7]=each1[2]
-        print(each)
+        #print(each)
+
+        #####################
         return total, each
     except:
         print("=" * 120)

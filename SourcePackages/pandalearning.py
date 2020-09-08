@@ -468,6 +468,7 @@ def zhuanxiang(cookies, d_log, each):
                 if '开始答题' in temword:
                     driver_zhuanxiang.click_xpath(
                         '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
+                    break
             while each[7] < 10:
                 try:
                     category = driver_zhuanxiang.xpath_getText(

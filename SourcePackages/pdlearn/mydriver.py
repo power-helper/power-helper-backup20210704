@@ -239,12 +239,19 @@ class Mydriver:
             except Exception as e:
                 print("点击", check_option, '失败！')
         self.check_delay()
+        flag=0
         try:
             self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button').click()
             # self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button[contains(text(), "确")]').click()
         except Exception as e:
             print("点击 确定 进入下一题失败！报错：")
+            flag=1
             print(e)
+        if flag==1:#专项答题交卷
+            try:
+                self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]').click()
+            except Exception as e:
+                print('交卷可能出现问题')
 
     def blank_get(self):
         html = self.driver.page_source
@@ -279,12 +286,19 @@ class Mydriver:
             self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]').click()
         except:
             print('未找到交卷按钮，继续做题')
+        flag=0
         try:
             self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button').click()
             # self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button[contains(text(), "确")]').click()
         except Exception as e:
             print("点击 确定 进入下一题失败！报错：")
+            flag=1
             print(e)
+        if flag==1:
+            try:
+                self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]').click()
+            except Exception as e:
+                print('交卷可能出现问题')
 
     def _search(self, content, options, exclude=''):
         # 职责 网上搜索
