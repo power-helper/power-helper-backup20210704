@@ -169,7 +169,7 @@ class Mydriver:
         time.sleep(delay_time)
 
     def _view_tips(self):
-        #global answer
+        # global answer
         content = ""
         try:
             # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')

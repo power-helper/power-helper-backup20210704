@@ -52,7 +52,7 @@ def show_score(cookies):
     total, each = score.get_score(cookies)
     print("当前学习总积分：" + str(total))
     print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6,每日答题:{}/6,每周答题:{}/5,专项答题:{}/10".format(*each))
-    #print("阅读文章:",each[0],"/6,观看视频:",each[1],"/6,登陆:",each[2],"/1,文章时长:",each[3],"/6,视频时长:",each[4],"/6,每日答题:",each[5],"/6,每周答题:",each[6],"/5,专项答题:",each[7],"/10")
+    # print("阅读文章:",each[0],"/6,观看视频:",each[1],"/6,登陆:",each[2],"/1,文章时长:",each[3],"/6,视频时长:",each[4],"/6,每日答题:",each[5],"/6,每周答题:",each[6],"/5,专项答题:",each[7],"/10")
     return total, each
 
 
@@ -577,6 +577,13 @@ def zhuanxiang(cookies, d_log, each):
 if __name__ == '__main__':
     #  0 读取版本信息
     start_time = time.time()
+
+    print('''现支持以下模式：
+    1 文章+视频
+    2 每日答题+每周答题+专项答题+文章+视频
+    3 每日答题+文章+视频''')
+    TechXueXi_mode = input("请选择模式并回车： ")
+
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
     info_shread.start()
     #  1 创建用户标记，区分多个用户历史纪录
@@ -584,12 +591,6 @@ if __name__ == '__main__':
     cookies, a_log, v_log, d_log = user_flag(dd_status, uname)
     total, each = show_score(cookies)
     nohead, lock, stime = get_argv()
-
-    print('''现支持以下模式：
-    1 文章+视频
-    2 每日答题+每周答题+专项答题+文章+视频
-    3 每日答题+文章+视频''')
-    TechXueXi_mode=input("请选择模式并回车： ")
 
     if TechXueXi_mode in ["2", "3"]:
         print('开始每日答题……')

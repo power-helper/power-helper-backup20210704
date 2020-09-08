@@ -9,7 +9,7 @@ def get_score(cookies):
         for cookie in cookies:
             jar.set(cookie['name'], cookie['value'])
         total = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
-                            headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
+                             headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
         total = int(json.loads(total, encoding="utf8")["data"]["score"])
         each = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
                             headers={'Cache-Control': 'no-cache'}).content.decode(
