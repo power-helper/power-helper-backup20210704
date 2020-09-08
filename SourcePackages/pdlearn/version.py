@@ -3,16 +3,16 @@ import requests
 
 def up_info():
     print("\n正在联网获取更新信息...")
-    __Version = "v20200814"
+    __Version = "v20200908"
     __INFO = "TechXueXi最新下载地址为 https://github.com/TechXueXi/TechXueXi"
     try:
         updata_log = requests.get(
-        "https://techxuexi.vercel.app/Update.html").content.decode(
-        "utf8")
+            "https://techxuexi.vercel.app/Update.html").content.decode(
+            "utf8")
         updata_log = updata_log.split("\n")
         print(__INFO)
         print("程序版本为：{}，\n最新版本为：{}".format(__Version, updata_log[1].split("=")[1]))
-        print("="*120)
+        print("=" * 120)
         if __Version != updata_log[1].split("=")[1]:
             print("当前不是最新版本，建议更新")
             print("=" * 120)

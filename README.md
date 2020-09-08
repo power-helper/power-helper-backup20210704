@@ -1,6 +1,10 @@
-**[在线聊天室试运行，地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+**[在线聊天室地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+
+**支持每日答题，支持每周答题，支持专项答题**
 
 **下载地址：https://github.com/TechXueXi/TechXueXi/releases**
+
+（如使用源码，请使用主分支。请勿使用 dev 分支，该分支仅用于同步开发）
 
 > 本项目基于某已终止的项目，请自行搜索后前往star。我们由衷地敬佩这个领域的先锋们
 ![](https://raw.githubusercontent.com/TechXueXi/TechXueXi/master/img_folder/banner.jpg)
@@ -15,17 +19,17 @@
 
 本项目维护计划、路线图参见 https://github.com/TechXueXi/TechXueXi/projects/1
 
-如您参与贡献，请注意：维护计划、路线图中每一条未列至"Done"下时，仅可在dev分支改动。网站改版的修改可同时提交至dev和master。
+如您参与贡献，请注意：维护计划、路线图中每一条未列至"Done"下时，仅可在 dev 分支改动。网站改版的修改可同时提交至dev和master。
 
 ### [👨‍👨‍👦‍👦   直接参与贡献](https://github.com/TechXueXi/TechXueXi/blob/master/CONTRIBUTING.md)(内附提交方法)
 
 如您开发了其他“科技强国”项目，也可以加入本组织，相互交流，共同维护生态。
 
-您还可以选用配置比较复杂的但37分/天同类产品：https://github.com/TechXueXi/AutoXue
+
 
 # TechXueXi
 
-TechXueXi 是一款使用python语言编写的学习工具。25分/天
+TechXueXi 是一款使用python语言编写的学习工具。可达 47 分/天
 
 
 
@@ -137,10 +141,10 @@ TechXueXi为python学习交流的开源非营利项目，仅作为程序员之�
 
 ## 💾下载地址
 **非windows系统请暂时使用源码运行，各位若编译了二进制文件，可以邮件我们（推荐）或提交PR，谢谢————20200428**
-
+<!--
 [windows高速下载](https://github.com/TechXueXi/TechXueXi/releases)
 
-<!--
+
 [全部文件列表](https://techxuexi.github.io/TechXueXi-download/)
 
 [![](https://img.shields.io/badge/download-win%20完整版-blue.svg?style=for-the-badge&logo=windows)](https://techxuexi.github.io/TechXueXi-download/Panda_learning-win.7z)  首次使用推荐下载
@@ -177,11 +181,11 @@ TechXueXi为python学习交流的开源非营利项目，仅作为程序员之�
 
 win平台可能提示`无法定位程序输入点ucrtbase.terminate于动态链接库api-ms-win-crt-runtime-|1-1-0.dll`等缺失dll文件的问题而无法使用，尝试安装`Visual C++ Redistributable for Visual Studio 2015`
 
-**请自行寻找下载安装。**
+**下载安装:**
 
-[![](https://img.shields.io/badge/download-vc_redist.x64-blue.svg?style=for-the-badge&logo=visualstudiocode)](https://techxuexi.github.io/TechXueXi-download/windows不能运行时安装/vc_redist.x64.exe) 
+[![](https://img.shields.io/badge/download-vc_redist.x64-blue.svg?style=for-the-badge&logo=visualstudiocode)](https://raw.fastgit.org/TechXueXi/Panda-Learning/master/windows不能运行时安装/vc_redist.x64.exe) 
 
-[![](https://img.shields.io/badge/download-vc_redist.x86-blue.svg?style=for-the-badge&logo=visualstudiocode)](https://techxuexi.github.io/TechXueXi-download/windows不能运行时安装/vc_redist.x86.exe) 
+[![](https://img.shields.io/badge/download-vc_redist.x86-blue.svg?style=for-the-badge&logo=visualstudiocode)](https://raw.fastgit.org/TechXueXi/Panda-Learning/master/windows不能运行时安装/vc_redist.x86.exe) 
 
 
 
