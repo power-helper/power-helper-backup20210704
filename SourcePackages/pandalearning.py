@@ -67,7 +67,6 @@ def article(cookies, a_log, each):
                 a_num = 6 - each[0]
                 for i in range(a_log, a_log + a_num):
                     driver_article.get_url(links[i])
-                    time.sleep(random.randint(5, 15))
                     readarticle_time = 60+random.randint(5, 15)
                     for j in range(readarticle_time):
                         if random.random() > 0.5:
@@ -89,7 +88,6 @@ def article(cookies, a_log, each):
             if each[3] < 6 and try_count < 10:
                 num_time = 60
                 driver_article.get_url(links[a_log-1])
-                time.sleep(random.randint(5, 15))
                 
                 remaining = (6 - each[3]) * 1 * num_time
                 for i in range(remaining):
@@ -129,7 +127,6 @@ def video(cookies, v_log, each):
                 v_num = 6 - each[1]
                 for i in range(v_log, v_log + v_num):
                     driver_video.get_url(links[i])
-                    time.sleep(random.randint(5, 15))
                     watchvideo_time = 60+random.randint(5, 15)
                     for j in range(watchvideo_time):
                         if random.random() > 0.5:
@@ -151,7 +148,6 @@ def video(cookies, v_log, each):
             if each[4] < 6 and try_count < 10:
                 num_time = 60
                 driver_video.get_url(links[v_log-1])
-                time.sleep(random.randint(5, 15))
                 remaining = (6 - each[4]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
