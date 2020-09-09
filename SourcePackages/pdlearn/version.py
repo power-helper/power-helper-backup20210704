@@ -20,7 +20,7 @@ def up_info():
             for i in updata_log[2:]:
                 print(i)
         print("=" * 120)
-        print("更新显示不会打断之前输入等操作，请继续......（若已输入用户标记直接enter）")
+        print("更新显示不会打断之前输入等操作，请继续......")
     except:
         print("版本信息网络错误")
 
