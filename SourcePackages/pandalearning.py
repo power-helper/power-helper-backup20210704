@@ -330,7 +330,8 @@ def weekly(cookies, d_log, each):
                                 tem2 + 1) + ']/button').text
                     except:
                         temword = ''
-                    if flag == 1 and ('开始答题' in temword):
+                    name_list = ["开始答题", "继续答题", "重新答题"]
+                    if flag == 1 and (any(name in temword for name in name_list)):
                         driver_weekly.click_xpath(
                             '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
                                 tem2 + 1) + ']/button')
@@ -465,7 +466,8 @@ def zhuanxiang(cookies, d_log, each):
                         '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button').text
                 except:
                     temword = ''
-                if '开始答题' in temword:
+                name_list = ["开始答题", "继续答题", "重新答题"]
+                if (any(name in temword for name in name_list)):
                     driver_zhuanxiang.click_xpath(
                         '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
                     break
