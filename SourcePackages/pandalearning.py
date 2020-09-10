@@ -236,10 +236,8 @@ def daily(cookies, d_log, each):
                                     # print(f'{option} in tips')
                                     if letter not in radio_in_tips:
                                         radio_in_tips += letter
-                                else:
-                                    # print(f'{option} out tips')
-                                    if letter not in radio_out_tips:
-                                        radio_out_tips += letter
+                        radio_out_tips = [letter for letter, option in zip(letters, options) if
+                                          (letter not in radio_in_tips)]
 
                         print('含 ', radio_in_tips, '不含', radio_out_tips)
                         if len(radio_in_tips) > 1:  # and radio_in_tips not in driver_daily.excludes:
@@ -375,10 +373,8 @@ def weekly(cookies, d_log, each):
                                     # print(f'{option} in tips')
                                     if letter not in radio_in_tips:
                                         radio_in_tips += letter
-                                else:
-                                    # print(f'{option} out tips')
-                                    if letter not in radio_out_tips:
-                                        radio_out_tips += letter
+                        radio_out_tips = [letter for letter, option in zip(letters, options) if
+                                          (letter not in radio_in_tips)]
 
                         print('含 ', radio_in_tips, '不含', radio_out_tips)
                         if len(radio_in_tips) > 1:  # and radio_in_tips not in driver_weekly.excludes:
@@ -510,10 +506,8 @@ def zhuanxiang(cookies, d_log, each):
                                     # print(f'{option} in tips')
                                     if letter not in radio_in_tips:
                                         radio_in_tips += letter
-                                else:
-                                    # print(f'{option} out tips')
-                                    if letter not in radio_out_tips:
-                                        radio_out_tips += letter
+                        radio_out_tips = [letter for letter, option in zip(letters, options) if
+                                          (letter not in radio_in_tips)]
 
                         print('含 ', radio_in_tips, '不含', radio_out_tips)
                         if len(radio_in_tips) > 1:  # and radio_in_tips not in driver_zhuanxiang.excludes:
