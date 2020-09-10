@@ -247,9 +247,13 @@ class Mydriver:
             print("点击 确定 进入下一题失败！报错：")
             flag = 1
             print(e)
-        if flag == 1:  # 专项答题交卷
+        if True and flag == 1:  # 专项答题交卷
             try:
-                self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]').click()
+                self.driver.find_element_by_xpath(
+                    '//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]/span[contains(text(), "交 卷")]').click()
+                self.driver.find_element_by_xpath(
+                    '//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]/span[contains(text(), "交 卷")]').click()
+                # self.driver.find_element_by_xpath('//button/span[contains(text(), "交卷")]').click()
             except Exception as e:
                 print('交卷可能出现问题')
 
@@ -284,6 +288,8 @@ class Mydriver:
         self.check_delay()
         try:
             self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]').click()
+            self.driver.find_element_by_xpath(
+                '//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]/span[contains(text(), "交 卷")]').click()
         except:
             print('未找到交卷按钮，继续做题')
         flag = 0
@@ -294,9 +300,13 @@ class Mydriver:
             print("点击 确定 进入下一题失败！报错：")
             flag = 1
             print(e)
-        if flag == 1:
+        if True and flag == 1:  # 专项答题交卷
             try:
-                self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]').click()
+                self.driver.find_element_by_xpath(
+                    '//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]/span[contains(text(), "交 卷")]').click()
+                self.driver.find_element_by_xpath(
+                    '//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]/span[contains(text(), "交 卷")]').click()
+                # self.driver.find_element_by_xpath('//button/span[contains(text(), "交卷")]').click()
             except Exception as e:
                 print('交卷可能出现问题')
 
