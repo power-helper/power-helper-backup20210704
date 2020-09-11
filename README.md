@@ -222,7 +222,7 @@ win平台可能提示`无法定位程序输入点ucrtbase.terminate于动态链�
 
 ## 📝源码
 
-[![](https://img.shields.io/badge/source-pandalearning-orange.svg?style=for-the-badge&logo=visualstudiocode)](https://github.com/TechXueXi/TechXueXi/tree/master/Source%20Packages) 
+[![](https://img.shields.io/badge/source-pandalearning-orange.svg?style=for-the-badge&logo=visualstudiocode)](https://github.com/TechXueXi/TechXueXi/tree/master/SourcePackages) 
 
 
 
