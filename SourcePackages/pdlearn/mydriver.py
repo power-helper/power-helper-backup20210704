@@ -241,11 +241,15 @@ class Mydriver:
         self.check_delay()
         flag = 0
         try:
-            self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button').click()
+            submit = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button')
+            if submit.is_enabled():
+            # if submit.is_displayed():
+                submit.click()
+            else:
+                flag = 1
             # self.driver.find_element_by_xpath('//*[@id="app"]/div/div[*]/div/div[*]/div[*]/button[contains(text(), "确")]').click()
         except Exception as e:
             print("点击 确定 进入下一题失败！报错：")
-            flag = 1
             print(e)
         if True and flag == 1:  # 专项答题交卷
             try:
