@@ -587,7 +587,7 @@ if __name__ == '__main__':
     #  0 读取版本信息
     start_time = time.time()
 
-    print('''
+    print("=" * 120,'''
     科技强国官方网站：https://techxuexi.js.org
     Github地址：https://github.com/TechXueXi
 使用本项目，必须接受以下内容，否则请立即退出：
@@ -602,7 +602,7 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
       （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
     3 每日答题+文章+视频
       （可以根据当日已得做题积分，决定是否做题）
-      ''')
+''',"=" * 120)
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
