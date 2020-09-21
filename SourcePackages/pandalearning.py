@@ -251,33 +251,37 @@ def daily(cookies, d_log, each):
                             print('无法根据提示判断，准备搜索……')
                     elif "单选题" in category:
                         options = driver_daily.radio_get_options()
-                        radio_in_tips, radio_out_tips = "", ""
-                        '''
-                        option_elements = driver_daily.wait.until(driver_daily.EC.presence_of_all_elements_located(
-                            (driver_daily.By.XPATH, '//*[@id="app"]/div/div[2]/div/div[4]/div[1]')))
-                        # option_elements = self.find_elements(rules['challenge_options'])
-                        options = [x.get_attribute("name") for x in option_elements]'''
-                        for letter, option in zip(letters, options):
-                            for tip in tips:
-                                if tip in option:
-                                    # print(f'{option} in tips')
-                                    if letter not in radio_in_tips:
-                                        radio_in_tips += letter
-                                else:
-                                    # print(f'{option} out tips')
-                                    if letter not in radio_out_tips:
-                                        radio_out_tips += letter
-
-                        print('含 ', radio_in_tips, '不含', radio_out_tips)
-                        if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_daily.excludes:
-                            print('根据提示', radio_in_tips)
-                            driver_daily.radio_check(radio_in_tips)
-                        elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
-                            print('根据提示', radio_out_tips)
-                            driver_daily.radio_check(radio_out_tips)
-                        # return driver_daily._search(content, options, excludes)
+                        if '因此本题选' in tips:
+                            check=[x for x in letters if x in tips]
+                            driver_daily.radio_check(check)
                         else:
-                            print('无法根据提示判断，准备搜索……')
+                            radio_in_tips, radio_out_tips = "", ""
+                            '''
+                            option_elements = driver_daily.wait.until(driver_daily.EC.presence_of_all_elements_located(
+                                (driver_daily.By.XPATH, '//*[@id="app"]/div/div[2]/div/div[4]/div[1]')))
+                            # option_elements = self.find_elements(rules['challenge_options'])
+                            options = [x.get_attribute("name") for x in option_elements]'''
+                            for letter, option in zip(letters, options):
+                                for tip in tips:
+                                    if tip in option:
+                                        # print(f'{option} in tips')
+                                        if letter not in radio_in_tips:
+                                            radio_in_tips += letter
+                                    else:
+                                        # print(f'{option} out tips')
+                                        if letter not in radio_out_tips:
+                                            radio_out_tips += letter
+
+                            print('含 ', radio_in_tips, '不含', radio_out_tips)
+                            if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_daily.excludes:
+                                print('根据提示', radio_in_tips)
+                                driver_daily.radio_check(radio_in_tips)
+                            elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
+                                print('根据提示', radio_out_tips)
+                                driver_daily.radio_check(radio_out_tips)
+                            # return driver_daily._search(content, options, excludes)
+                            else:
+                                print('无法根据提示判断，准备搜索……')
                     else:
                         print("题目类型非法")
                         break
@@ -388,33 +392,37 @@ def weekly(cookies, d_log, each):
                             print('无法根据提示判断，准备搜索……')
                     elif "单选题" in category:
                         options = driver_weekly.radio_get_options()
-                        radio_in_tips, radio_out_tips = "", ""
-                        '''
-                        option_elements = driver_weekly.wait.until(driver_weekly.EC.presence_of_all_elements_located(
-                            (driver_weekly.By.XPATH, '//*[@id="app"]/div/div[2]/div/div[4]/div[1]')))
-                        # option_elements = self.find_elements(rules['challenge_options'])
-                        options = [x.get_attribute("name") for x in option_elements]'''
-                        for letter, option in zip(letters, options):
-                            for tip in tips:
-                                if tip in option:
-                                    # print(f'{option} in tips')
-                                    if letter not in radio_in_tips:
-                                        radio_in_tips += letter
-                                else:
-                                    # print(f'{option} out tips')
-                                    if letter not in radio_out_tips:
-                                        radio_out_tips += letter
-
-                        print('含 ', radio_in_tips, '不含', radio_out_tips)
-                        if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_weekly.excludes:
-                            print('根据提示', radio_in_tips)
-                            driver_weekly.radio_check(radio_in_tips)
-                        elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
-                            print('根据提示', radio_out_tips)
-                            driver_weekly.radio_check(radio_out_tips)
-                        # return driver_weekly._search(content, options, excludes)
+                        if '因此本题选' in tips:
+                            check=[x for x in letters if x in tips]
+                            driver_weekly.radio_check(check)
                         else:
-                            print('无法根据提示判断，准备搜索……')
+                            radio_in_tips, radio_out_tips = "", ""
+                            '''
+                            option_elements = driver_weekly.wait.until(driver_weekly.EC.presence_of_all_elements_located(
+                                (driver_weekly.By.XPATH, '//*[@id="app"]/div/div[2]/div/div[4]/div[1]')))
+                            # option_elements = self.find_elements(rules['challenge_options'])
+                            options = [x.get_attribute("name") for x in option_elements]'''
+                            for letter, option in zip(letters, options):
+                                for tip in tips:
+                                    if tip in option:
+                                        # print(f'{option} in tips')
+                                        if letter not in radio_in_tips:
+                                            radio_in_tips += letter
+                                    else:
+                                        # print(f'{option} out tips')
+                                        if letter not in radio_out_tips:
+                                            radio_out_tips += letter
+
+                            print('含 ', radio_in_tips, '不含', radio_out_tips)
+                            if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_weekly.excludes:
+                                print('根据提示', radio_in_tips)
+                                driver_weekly.radio_check(radio_in_tips)
+                            elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
+                                print('根据提示', radio_out_tips)
+                                driver_weekly.radio_check(radio_out_tips)
+                            # return driver_weekly._search(content, options, excludes)
+                            else:
+                                print('无法根据提示判断，准备搜索……')
                     else:
                         print("题目类型非法")
                         break
@@ -521,33 +529,37 @@ def zhuanxiang(cookies, d_log, each):
                             print('无法根据提示判断，准备搜索……')
                     elif "单选题" in category:
                         options = driver_zhuanxiang.radio_get_options()
-                        radio_in_tips, radio_out_tips = "", ""
-                        '''
-                        option_elements = driver_zhuanxiang.wait.until(driver_zhuanxiang.EC.presence_of_all_elements_located(
-                            (driver_zhuanxiang.By.XPATH, '//*[@id="app"]/div/div[2]/div/div[4]/div[1]')))
-                        # option_elements = self.find_elements(rules['challenge_options'])
-                        options = [x.get_attribute("name") for x in option_elements]'''
-                        for letter, option in zip(letters, options):
-                            for tip in tips:
-                                if tip in option:
-                                    # print(f'{option} in tips')
-                                    if letter not in radio_in_tips:
-                                        radio_in_tips += letter
-                                else:
-                                    # print(f'{option} out tips')
-                                    if letter not in radio_out_tips:
-                                        radio_out_tips += letter
-
-                        print('含 ', radio_in_tips, '不含', radio_out_tips)
-                        if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_zhuanxiang.excludes:
-                            print('根据提示', radio_in_tips)
-                            driver_zhuanxiang.radio_check(radio_in_tips)
-                        elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
-                            print('根据提示', radio_out_tips)
-                            driver_zhuanxiang.radio_check(radio_out_tips)
-                        # return driver_zhuanxiang._search(content, options, excludes)
+                        if '因此本题选' in tips:
+                            check=[x for x in letters if x in tips]
+                            driver_zhuanxiang.radio_check(check)
                         else:
-                            print('无法根据提示判断，准备搜索……')
+                            radio_in_tips, radio_out_tips = "", ""
+                            '''
+                            option_elements = driver_zhuanxiang.wait.until(driver_zhuanxiang.EC.presence_of_all_elements_located(
+                                (driver_zhuanxiang.By.XPATH, '//*[@id="app"]/div/div[2]/div/div[4]/div[1]')))
+                            # option_elements = self.find_elements(rules['challenge_options'])
+                            options = [x.get_attribute("name") for x in option_elements]'''
+                            for letter, option in zip(letters, options):
+                                for tip in tips:
+                                    if tip in option:
+                                        # print(f'{option} in tips')
+                                        if letter not in radio_in_tips:
+                                            radio_in_tips += letter
+                                    else:
+                                        # print(f'{option} out tips')
+                                        if letter not in radio_out_tips:
+                                            radio_out_tips += letter
+
+                            print('含 ', radio_in_tips, '不含', radio_out_tips)
+                            if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_zhuanxiang.excludes:
+                                print('根据提示', radio_in_tips)
+                                driver_zhuanxiang.radio_check(radio_in_tips)
+                            elif 1 == len(radio_out_tips):  # and radio_out_tips not in excludes
+                                print('根据提示', radio_out_tips)
+                                driver_zhuanxiang.radio_check(radio_out_tips)
+                            # return driver_zhuanxiang._search(content, options, excludes)
+                            else:
+                                print('无法根据提示判断，准备搜索……')
                     else:
                         print("题目类型非法")
                         break
