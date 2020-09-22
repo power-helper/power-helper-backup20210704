@@ -47,7 +47,8 @@ class Mydriver:
                 self.options.add_argument('--disable-gpu')
                 self.options.add_argument('--no-sandbox')
             self.options.add_argument('--mute-audio')  # 关闭声音
-            self.options.add_argument('--window-size=400,500')
+            # self.options.add_argument('--window-size=400,500')
+            self.options.add_argument('--window-size=750,450')
             # self.options.add_argument('--window-size=900,800')
             self.options.add_argument('--window-position=700,0')
             self.options.add_argument('--log-level=3')
