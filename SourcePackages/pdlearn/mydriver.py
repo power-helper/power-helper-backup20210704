@@ -225,7 +225,7 @@ class Mydriver:
     def radio_get_options(self):
         html = self.driver.page_source
         soup1 = BeautifulSoup(html, 'lxml')
-        content = soup1.find_all('div', attrs={'class': 'q-answer choosable'})
+        content = soup1.find_all('div', attrs={'class': 'choosable'})
         options = []
         for i in content:
             options.append(i.text)
