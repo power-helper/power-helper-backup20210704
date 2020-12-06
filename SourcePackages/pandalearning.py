@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import math
 from time import sleep
 from sys import argv
 import random
@@ -22,6 +23,7 @@ def user_flag(dd_status, uname):
         if True:
             driver_login = mydriver.Mydriver(nohead=False)
             cookies = driver_login.login()
+            driver_login.quit()
         else:
             cookies = dingding.dd_login_status(uname)
     a_log = user.get_a_log(uname)
@@ -55,7 +57,7 @@ def show_score(cookies):
     total, scores = score.get_score(cookies)
     print("当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"]))
     # print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6,每日答题:{}/5,每周答题:{}/5,专项答题:{}/10".format(*ea_ch))
-    print("阅读文章:",scores["article_num"],"/6,观看视频:",scores["video_num"],"/6,登陆:",scores["login"],"/1,文章时长:",scores["article_time"],"/6,视频时长:",scores["video_time"],"/6,每日答题:",scores["daily"],"/6,每周答题:",scores["weekly"],"/5,专项答题:",scores["zhuanxiang"],"/10")
+    print("阅读文章:",scores["article_num"],"/6,观看视频:",scores["video_num"],"/6,登陆:",scores["login"],"/1,文章时长:",scores["article_time"],"/6,视频时长:",scores["video_time"],"/6,每日答题:",scores["daily"],"/5,每周答题:",scores["weekly"],"/5,专项答题:",scores["zhuanxiang"],"/10")
     return total, scores
 
 
@@ -619,7 +621,7 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
       （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
 ''',"=" * 60)
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
-
+    
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
     info_shread.start()
     #  1 创建用户标记，区分多个用户历史纪录
@@ -627,14 +629,14 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
     cookies, a_log, v_log, d_log = user_flag(dd_status, uname)
     total, scores = show_score(cookies)
     nohead, lock, stime = get_argv()
-
+    
     article_thread = threads.MyThread("文章学习", article, cookies, a_log, scores, lock=lock)
     video_thread = threads.MyThread("视频学习", video, cookies, v_log, scores, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
     video_thread.join()
-
+    
     if TechXueXi_mode in ["2"]:
         print('开始每日答题……')
         daily(cookies, d_log, scores)
@@ -643,6 +645,7 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
         weekly(cookies, d_log, scores)
         print('开始专项答题……')
         zhuanxiang(cookies, d_log, scores)
-
-    print("总计用时" + str(int(time.time() - start_time) / 60) + "分钟")
+    
+    seconds_used = int(time.time() - start_time)
+    print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
     user.shutdown(stime)
