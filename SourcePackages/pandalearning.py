@@ -1,4 +1,7 @@
+import os
+import sys
 import time
+from time import sleep
 from sys import argv
 import random
 from pdlearn import version
@@ -49,15 +52,15 @@ def get_argv():
 
 
 def show_score(cookies):
-    total, each = score.get_score(cookies)
-    print("当前学习总积分：" + str(total))
-    print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6,每日答题:{}/6,每周答题:{}/5,专项答题:{}/10".format(*each))
-    # print("阅读文章:",each[0],"/6,观看视频:",each[1],"/6,登陆:",each[2],"/1,文章时长:",each[3],"/6,视频时长:",each[4],"/6,每日答题:",each[5],"/6,每周答题:",each[6],"/5,专项答题:",each[7],"/10")
-    return total, each
+    total, scores = score.get_score(cookies)
+    print("当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"]))
+    # print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6,每日答题:{}/5,每周答题:{}/5,专项答题:{}/10".format(*ea_ch))
+    print("阅读文章:",scores["article_num"],"/6,观看视频:",scores["video_num"],"/6,登陆:",scores["login"],"/1,文章时长:",scores["article_time"],"/6,视频时长:",scores["video_time"],"/6,每日答题:",scores["daily"],"/6,每周答题:",scores["weekly"],"/5,专项答题:",scores["zhuanxiang"],"/10")
+    return total, scores
 
 
-def article(cookies, a_log, each):
-    if each[0] < 6 or each[3] < 8:
+def article(cookies, a_log, scores):
+    if scores["article_num"] < 6 or scores["article_time"] < 6:
         driver_article = mydriver.Mydriver(nohead=nohead)
         driver_article.get_url("https://www.xuexi.cn/notFound.html")
         driver_article.set_cookies(cookies)
@@ -65,8 +68,8 @@ def article(cookies, a_log, each):
         try_count = 0
         readarticle_time = 0
         while True:
-            if each[0] < 6 and try_count < 10:
-                a_num = 6 - each[0]
+            if scores["article_num"] < 6 and try_count < 10:
+                a_num = 6 - scores["article_num"]
                 for i in range(a_log, a_log + a_num):
                     driver_article.get_url(links[i])
                     readarticle_time = 60 + random.randint(5, 15)
@@ -76,8 +79,8 @@ def article(cookies, a_log, each):
                         print("\r文章学习中，文章剩余{}篇,本篇剩余时间{}秒".format(a_log + a_num - i, readarticle_time - j), end="")
                         time.sleep(1)
                     driver_article.go_js('window.scrollTo(0, document.body.scrollHeight)')
-                    total, each = show_score(cookies)
-                    if each[0] >= 6:
+                    total, scores = show_score(cookies)
+                    if scores["article_num"] >= 6:
                         print("检测到文章数量分数已满,退出学习")
                         break
                 a_log += a_num
@@ -87,10 +90,10 @@ def article(cookies, a_log, each):
                 break
         try_count = 0
         while True:
-            if each[3] < 6 and try_count < 10:
+            if scores["article_time"] < 6 and try_count < 10:
                 num_time = 60
                 driver_article.get_url(links[a_log - 1])
-                remaining = (6 - each[3]) * 1 * num_time
+                remaining = (6 - scores["article_time"]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
                         driver_article.go_js(
@@ -98,12 +101,12 @@ def article(cookies, a_log, each):
                     print("\r文章时长学习中，文章总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
                     if i % (60) == 0 and i != remaining:
-                        total, each = show_score(cookies)
-                        if each[3] >= 6:
+                        total, scores = show_score(cookies)
+                        if scores["article_time"] >= 6:
                             print("检测到文章时长分数已满,退出学习")
                             break
                 driver_article.go_js('window.scrollTo(0, document.body.scrollHeight)')
-                total, each = show_score(cookies)
+                total, scores = show_score(cookies)
             else:
                 break
         if try_count < 10:
@@ -115,8 +118,8 @@ def article(cookies, a_log, each):
         print("文章之前学完了")
 
 
-def video(cookies, v_log, each):
-    if each[1] < 6 or each[4] < 10:
+def video(cookies, v_log, scores):
+    if scores["video_num"] < 6 or scores["video_time"] < 10:
         driver_video = mydriver.Mydriver(nohead=nohead)
         driver_video.get_url("https://www.xuexi.cn/notFound.html")
         driver_video.set_cookies(cookies)
@@ -124,8 +127,8 @@ def video(cookies, v_log, each):
         try_count = 0
         watchvideo_time = 0
         while True:
-            if each[1] < 6 and try_count < 10:
-                v_num = 6 - each[1]
+            if scores["video_num"] < 6 and try_count < 10:
+                v_num = 6 - scores["video_num"]
                 for i in range(v_log, v_log + v_num):
                     driver_video.get_url(links[i])
                     watchvideo_time = 60 + random.randint(5, 15)
@@ -135,8 +138,8 @@ def video(cookies, v_log, each):
                         print("\r视频学习中，视频剩余{}个,本次剩余时间{}秒".format(v_log + v_num - i, watchvideo_time - j), end="")
                         time.sleep(1)
                     driver_video.go_js('window.scrollTo(0, document.body.scrollHeight)')
-                    total, each = show_score(cookies)
-                    if each[1] >= 6:
+                    total, scores = show_score(cookies)
+                    if scores["video_num"] >= 6:
                         print("检测到视频数量分数已满,退出学习")
                         break
                 v_log += v_num
@@ -146,10 +149,10 @@ def video(cookies, v_log, each):
                 break
         try_count = 0
         while True:
-            if each[4] < 6 and try_count < 10:
+            if scores["video_time"] < 6 and try_count < 10:
                 num_time = 60
                 driver_video.get_url(links[v_log - 1])
-                remaining = (6 - each[4]) * 1 * num_time
+                remaining = (6 - scores["video_time"]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
                         driver_video.go_js(
@@ -157,12 +160,12 @@ def video(cookies, v_log, each):
                     print("\r视频学习中，视频总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
                     if i % (60) == 0 and i != remaining:
-                        total, each = show_score(cookies)
-                        if each[4] >= 6:
+                        total, scores = show_score(cookies)
+                        if scores["video_time"] >= 6:
                             print("检测到视频时长分数已满,退出学习")
                             break
                 driver_video.go_js('window.scrollTo(0, document.body.scrollHeight)')
-                total, each = show_score(cookies)
+                total, scores = show_score(cookies)
             else:
                 break
         if try_count < 10:
@@ -180,8 +183,8 @@ def check_delay():
     time.sleep(delay_time)
 
 
-def daily(cookies, d_log, each):
-    if each[5] < 6:
+def daily(cookies, d_log, scores):
+    if scores["daily"] < 6:
         # driver_daily = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_daily = mydriver.Mydriver(nohead=False)
         driver_daily.driver.maximize_window()
@@ -192,12 +195,12 @@ def daily(cookies, d_log, each):
         driver_daily.set_cookies(cookies)
         try_count = 0
 
-        if each[5] < 6:
-            d_num = 6 - each[5]
+        if scores["daily"] < 6:
+            d_num = 6 - scores["daily"]
             letters = list("ABCDEFGHIJKLMN")
             driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div')
-            while each[5] < 6:
+            while scores["daily"] < 6:
                 try:
                     category = driver_daily.xpath_getText(
                         '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
@@ -289,8 +292,8 @@ def daily(cookies, d_log, each):
                     time.sleep(1)
                 d_log += d_num
 
-            total, each = show_score(cookies)
-            if each[5] >= 6:
+            total, scores = show_score(cookies)
+            if scores["daily"] >= 5:
                 print("检测到每日答题分数已满,退出学习")
                 driver_daily.quit()
         else:
@@ -305,8 +308,8 @@ def daily(cookies, d_log, each):
         print("每日答题之前学完了")
 
 
-def weekly(cookies, d_log, each):
-    if each[6] < 5:
+def weekly(cookies, d_log, scores):
+    if scores["weekly"] < 5:
         # driver_weekly = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_weekly = mydriver.Mydriver(nohead=False)
         driver_weekly.driver.maximize_window()
@@ -317,28 +320,38 @@ def weekly(cookies, d_log, each):
         driver_weekly.set_cookies(cookies)
         try_count = 0
 
-        if each[6] < 5:
-            d_num = 6 - each[5]
+        if scores["weekly"] < 5:
+            d_num = 6 - scores["weekly"]
             letters = list("ABCDEFGHIJKLMN")
             driver_weekly.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_weekly.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div')
             time.sleep(2)
-            flag = 1
-            for tem in range(0, 40):
-                for tem2 in range(0, 5):
-                    try:
-                        temword = driver_weekly.driver.find_element_by_xpath(
-                            '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
-                                tem2 + 1) + ']/button').text
-                    except:
-                        temword = ''
-                    name_list = ["开始答题", "继续答题"]
-                    if flag == 1 and (any(name in temword for name in name_list)):
-                        driver_weekly.click_xpath(
-                            '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
-                                tem2 + 1) + ']/button')
-                        flag = 0
-            while each[6] < 5 and try_count < 10:
+#           flag = 1
+#           for tem in range(0, 40):
+#               for tem2 in range(0, 5):
+#                   try:
+#                       temword = driver_weekly.driver.find_element_by_xpath(
+#                           '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
+#                               tem2 + 1) + ']/button').text
+#                   except:
+#                       temword = ''
+#                   name_list = ["开始答题", "继续答题"]
+#                   if flag == 1 and (any(name in temword for name in name_list)):
+#                       driver_weekly.click_xpath(
+#                           '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
+#                               tem2 + 1) + ']/button')
+#                       flag = 0
+            dati = driver_weekly.driver.find_elements_by_css_selector("#app .month .week button")
+            toclick = dati
+            for i in range(len(dati)-1,0,-1):
+                j=dati[i]
+                if("重新" in j.text):
+                    continue
+                else:
+                    toclick = j
+                    break
+            toclick.click()
+            while scores["weekly"] < 5 and try_count < 10:
                 try:
                     category = driver_weekly.xpath_getText(
                         '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
@@ -430,8 +443,8 @@ def weekly(cookies, d_log, each):
                     time.sleep(1)
                 d_log += d_num
 
-            total, each = show_score(cookies)
-            if each[6] >= 5:
+            total, scores = show_score(cookies)
+            if scores["weekly"] >= 5:
                 print("检测到每周答题分数已满,退出学习")
                 driver_weekly.quit()
         else:
@@ -446,8 +459,8 @@ def weekly(cookies, d_log, each):
         print("每周答题之前学完了")
 
 
-def zhuanxiang(cookies, d_log, each):
-    if each[7] < 10:
+def zhuanxiang(cookies, d_log, scores):
+    if scores["zhuanxiang"] < 10:
         # driver_zhuanxiang = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_zhuanxiang = mydriver.Mydriver(nohead=False)
         driver_zhuanxiang.driver.maximize_window()
@@ -458,24 +471,26 @@ def zhuanxiang(cookies, d_log, each):
         driver_zhuanxiang.set_cookies(cookies)
         try_count = 0
 
-        if each[7] < 10:
-            d_num = 10 - each[5]
+        if scores["zhuanxiang"] < 10:
+            d_num = 10 - scores["zhuanxiang"]
             letters = list("ABCDEFGHIJKLMN")
             driver_zhuanxiang.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_zhuanxiang.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[7]/div[2]/div[2]/div')
             time.sleep(2)
-            for tem in range(0, 40):
-                try:
-                    temword = driver_zhuanxiang.driver.find_element_by_xpath(
-                        '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button').text
-                except:
-                    temword = ''
-                name_list = ["开始答题", "继续答题"]  # , "重新答题"
-                if (any(name in temword for name in name_list)):
-                    driver_zhuanxiang.click_xpath(
-                        '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
-                    break
-            while each[7] < 10:
+#           for tem in range(0, 40):
+#               try:
+#                   temword = driver_zhuanxiang.driver.find_element_by_xpath(
+#                       '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button').text
+#               except:
+#                   temword = ''
+#               name_list = ["开始答题", "继续答题"]  # , "重新答题"
+#               if (any(name in temword for name in name_list)):
+#                   driver_zhuanxiang.click_xpath(
+#                       '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
+#                   break
+            dati = driver_zhuanxiang.driver.find_elements_by_css_selector("#app .items .item button")
+            dati[-1].click()
+            while scores["zhuanxiang"] < 10:
                 try:
                     category = driver_zhuanxiang.xpath_getText(
                         '//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[1]')  # get_attribute("name")
@@ -567,8 +582,8 @@ def zhuanxiang(cookies, d_log, each):
                     time.sleep(1)
                 d_log += d_num
 
-            total, each = show_score(cookies)
-            if each[6] >= 5:
+            total, scores = show_score(cookies)
+            if scores["zhuanxiang"] >= 5:
                 print("检测到专项答题分数已满,退出学习")
                 driver_zhuanxiang.quit()
         else:
@@ -587,22 +602,22 @@ if __name__ == '__main__':
     #  0 读取版本信息
     start_time = time.time()
 
-    print("=" * 120,'''
+    print("=" * 60,'''
     科技强国官方网站：https://techxuexi.js.org
     Github地址：https://github.com/TechXueXi
 使用本项目，必须接受以下内容，否则请立即退出：
-    - TechXueXi 仅额外提供给“热爱党国”且“工作学业繁重”的人
+    - TechXueXi 仅额外提供给“爱党爱国”且“工作学业繁重”的人
     - 项目开源协议 LGPL-3.0
     - 不得利用本项目盈利
 另外，我们建议你参与一个维护劳动法的项目：
 https://996.icu/ 或 https://github.com/996icu/996.ICU/blob/master/README_CN.md
 TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：
     1 文章+视频
-    2 每日答题+每周答题+专项答题+文章+视频
-      （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
-    3 每日答题+文章+视频
+    2 每日答题+文章+视频
       （可以根据当日已得做题积分，决定是否做题）
-''',"=" * 120)
+    3 每日答题+每周答题+专项答题+文章+视频
+      （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
+''',"=" * 60)
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
@@ -610,20 +625,20 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
     #  1 创建用户标记，区分多个用户历史纪录
     dd_status, uname = user.get_user()
     cookies, a_log, v_log, d_log = user_flag(dd_status, uname)
-    total, each = show_score(cookies)
+    total, scores = show_score(cookies)
     nohead, lock, stime = get_argv()
 
-    if TechXueXi_mode in ["2", "3"]:
-        print('开始每日答题……')
-        daily(cookies, d_log, each)
     if TechXueXi_mode in ["2"]:
+        print('开始每日答题……')
+        daily(cookies, d_log, scores)
+    if TechXueXi_mode in ["2", "3"]:
         print('开始每周答题……')
-        weekly(cookies, d_log, each)
+        weekly(cookies, d_log, scores)
         print('开始专项答题……')
-        zhuanxiang(cookies, d_log, each)
+        zhuanxiang(cookies, d_log, scores)
 
-    article_thread = threads.MyThread("文章学习", article, cookies, a_log, each, lock=lock)
-    video_thread = threads.MyThread("视频学习", video, cookies, v_log, each, lock=lock)
+    article_thread = threads.MyThread("文章学习", article, cookies, a_log, scores, lock=lock)
+    video_thread = threads.MyThread("视频学习", video, cookies, v_log, scores, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()

@@ -12,14 +12,14 @@ def up_info():
         updata_log = updata_log.split("\n")
         print(__INFO)
         print("程序版本为：{}，\n最新版本为：{}".format(__Version, updata_log[1].split("=")[1]))
-        print("=" * 120)
+        print("=" * 60)
         if __Version != updata_log[1].split("=")[1]:
             print("当前不是最新版本，建议更新")
-            print("=" * 120)
+            print("=" * 60)
             print("更新提要：")
             for i in updata_log[2:]:
                 print(i)
-        print("=" * 120)
+        print("=" * 60)
         print("更新显示不会打断之前输入等操作，请继续......")
     except:
         print("版本信息网络错误")

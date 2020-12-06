@@ -11,23 +11,37 @@ def get_score(cookies):
         total = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
                              headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
         total = int(json.loads(total, encoding="utf8")["data"]["score"])
-        each1 = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
+        score_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
                              headers={'Cache-Control': 'no-cache'}).content.decode(
             "utf8")
-        each1 = json.loads(each1, encoding="utf8")["data"]["dayScoreDtos"]
-        each1 = [int(i["currentScore"]) for i in each1 if i["ruleId"] in [1, 2, 9, 1002, 1003, 6, 5, 4]]
-        each = [0, 0, 0, 0, 0, 0, 0, 0]
-        each[0] = each1[0]
-        each[1] = each1[1]
-        each[2] = each1[5]
-        each[3] = each1[6]
-        each[4] = each1[7]
-        each[5] = each1[4]
-        each[6] = each1[3]
-        each[7] = each1[2]
-        return total, each
+        dayScoreDtos = json.loads(score_json, encoding="utf8")["data"]["dayScoreDtos"]
+        rule_list = [1, 2, 9, 1002, 1003, 6, 5, 4]
+        score_list= [0, 0, 0, 0   , 0   , 0, 0, 0, 0, 0] # 长度为十
+        for i in dayScoreDtos:
+            for j in range(len(rule_list)):
+                if i["ruleId"] == rule_list[j]:
+                    score_list[j] = int(i["currentScore"])
+        # 阅读文章，视听学习，登录，文章时长，视听学习时长，每日答题，每周答题，专项答题
+        today = 0
+        for i in dayScoreDtos:
+            if(i["ruleId"] == 15 and int(i["currentScore"]) >= 1):
+                today += 1
+            else:
+                today += int(i["currentScore"])
+        scores = {}
+        scores["article_num"]  = score_list[0] # 0阅读文章
+        scores["video_num"]    = score_list[1] # 1视听学习
+        scores["login"]        = score_list[2] # 7登录
+        scores["article_time"] = score_list[3] # 6文章时长
+        scores["video_time"]   = score_list[4] # 5视听学习时长
+        scores["daily"]        = score_list[5] # 2每日答题
+        scores["weekly"]       = score_list[6] # 3每周答题
+        scores["zhuanxiang"]   = score_list[7] # 4专项答题
+        
+        scores["today"]        = today         # 8今日得分
+        return total, scores
     except:
-        print("=" * 120)
+        print("=" * 60)
         print("get_video_links获取失败")
-        print("=" * 120)
+        print("=" * 60)
         raise

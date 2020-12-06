@@ -71,9 +71,9 @@ class Mydriver:
             else:
                 self.driver = self.webdriver.Chrome(chrome_options=self.options)
         except:
-            print("=" * 120)
+            print("=" * 60)
             print("Mydriver初始化失败")
-            print("=" * 120)
+            print("=" * 60)
             raise
 
     def login(self):
@@ -165,7 +165,7 @@ class Mydriver:
         return self.driver.find_element_by_xpath(xpath).text
 
     def check_delay(self):
-        delay_time = random.randint(2, 15)
+        delay_time = random.randint(2, 8)
         print('等待 ', delay_time, ' 秒')
         time.sleep(delay_time)
 
