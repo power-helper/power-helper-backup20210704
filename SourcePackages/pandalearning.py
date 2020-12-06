@@ -613,9 +613,9 @@ if __name__ == '__main__':
 https://996.icu/ 或 https://github.com/996icu/996.ICU/blob/master/README_CN.md
 TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：
     1 文章+视频
-    2 每日答题+文章+视频
+    2 文章+视频+每日答题
       （可以根据当日已得做题积分，决定是否做题）
-    3 每日答题+每周答题+专项答题+文章+视频
+    3 文章+视频+每日答题+每周答题+专项答题
       （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
 ''',"=" * 60)
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
@@ -628,6 +628,13 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
     total, scores = show_score(cookies)
     nohead, lock, stime = get_argv()
 
+    article_thread = threads.MyThread("文章学习", article, cookies, a_log, scores, lock=lock)
+    video_thread = threads.MyThread("视频学习", video, cookies, v_log, scores, lock=lock)
+    article_thread.start()
+    video_thread.start()
+    article_thread.join()
+    video_thread.join()
+
     if TechXueXi_mode in ["2"]:
         print('开始每日答题……')
         daily(cookies, d_log, scores)
@@ -637,11 +644,5 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
         print('开始专项答题……')
         zhuanxiang(cookies, d_log, scores)
 
-    article_thread = threads.MyThread("文章学习", article, cookies, a_log, scores, lock=lock)
-    video_thread = threads.MyThread("视频学习", video, cookies, v_log, scores, lock=lock)
-    article_thread.start()
-    video_thread.start()
-    article_thread.join()
-    video_thread.join()
     print("总计用时" + str(int(time.time() - start_time) / 60) + "分钟")
     user.shutdown(stime)
