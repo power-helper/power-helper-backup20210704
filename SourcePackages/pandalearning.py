@@ -328,6 +328,7 @@ def weekly(cookies, d_log, scores):
             driver_weekly.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_weekly.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div')
             time.sleep(2)
+#<<<<<<< fix-some-bugs
 #           flag = 1
 #           for tem in range(0, 40):
 #               for tem2 in range(0, 5):
@@ -354,6 +355,44 @@ def weekly(cookies, d_log, scores):
                     break
             toclick.click()
             while scores["weekly"] < 5 and try_count < 10:
+'''                
+=======
+            flag = 1
+            page_num = 1
+            last_page = int(driver_weekly.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[5]/ul/li[last()-1]/a').text)
+            while page_num < last_page and flag == 1:
+                print('进入每周答题第'+ str(page_num) +'页')
+                all_month = len(driver_weekly.driver.find_elements_by_class_name('month'))
+                cur_month = 1
+                for tem in range(0, all_month):
+                    for tem2 in range(0, 6):
+                        if flag == 0:
+                            break
+                        try:
+                            temword = driver_weekly.driver.find_element_by_xpath(
+                                '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
+                                    tem2 + 1) + ']/button').text
+                        except:
+                            temword = ''
+                            if all_month == cur_month:
+                                driver_weekly.click_xpath(
+                                        '//*[@id="app"]/div/div[2]/div/div[5]/ul/li[' + str(page_num + 2) + ']')
+                                print('切换至下一页')
+                                page_num += 1
+                                time.sleep(2)
+                            cur_month += 1
+                            break
+                        name_list = ["开始答题", "继续答题"]
+                        if flag == 1 and (any(name in temword for name in name_list)):
+                            driver_weekly.click_xpath(
+                                '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
+                                    tem2 + 1) + ']/button')
+                            flag = 0
+                        elif '重新答题' in temword:
+                            continue
+            while each[6] < 5 and try_count < 10:
+>>>>>>> dev
+'''
                 try:
                     category = driver_weekly.xpath_getText(
                         '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
