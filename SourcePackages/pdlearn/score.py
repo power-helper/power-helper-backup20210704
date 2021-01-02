@@ -10,11 +10,11 @@ def get_score(cookies):
             jar.set(cookie['name'], cookie['value'])
         total = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
                              headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
-        total = int(json.loads(total, encoding="utf8")["data"]["score"])
+        total = int(json.loads(total)["data"]["score"])
         score_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
                              headers={'Cache-Control': 'no-cache'}).content.decode(
             "utf8")
-        dayScoreDtos = json.loads(score_json, encoding="utf8")["data"]["dayScoreDtos"]
+        dayScoreDtos = json.loads(score_json)["data"]["dayScoreDtos"]
         rule_list = [1, 2, 9, 1002, 1003, 6, 5, 4]
         score_list= [0, 0, 0, 0   , 0   , 0, 0, 0, 0, 0] # 长度为十
         for i in dayScoreDtos:
