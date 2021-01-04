@@ -7,6 +7,15 @@ import json
 # 今日积分
 # https://pc-api.xuexi.cn/open/api/score/today/query
 
+
+def show_score(cookies):
+    total, scores = score.get_score(cookies)
+    print("当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"]))
+    # print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6,每日答题:{}/5,每周答题:{}/5,专项答题:{}/10".format(*ea_ch))
+    print("阅读文章:",scores["article_num"],"/6,观看视频:",scores["video_num"],"/6,登陆:",scores["login"],"/1,文章时长:",scores["article_time"],"/6,视频时长:",scores["video_time"],"/6,每日答题:",scores["daily"],"/5,每周答题:",scores["weekly"],"/5,专项答题:",scores["zhuanxiang"],"/10")
+    return total, scores
+
+
 def get_score(cookies):
     try:
         jar = RequestsCookieJar()
@@ -29,12 +38,6 @@ def get_score(cookies):
                 if i["ruleId"] == rule_list[j]:
                     score_list[j] = int(i["currentScore"])
         # 阅读文章，视听学习，登录，文章时长，视听学习时长，每日答题，每周答题，专项答题
-        today = 0
-        for i in dayScoreDtos:
-            if(i["ruleId"] == 15 and int(i["currentScore"]) >= 1):
-                today += 1
-            else:
-                today += int(i["currentScore"])
         scores = {}
         scores["article_num"]  = score_list[0] # 0阅读文章
         scores["video_num"]    = score_list[1] # 1视听学习
@@ -49,6 +52,6 @@ def get_score(cookies):
         return total, scores
     except:
         print("=" * 60)
-        print("get_video_links获取失败")
+        print("get_score 获取失败")
         print("=" * 60)
         raise
