@@ -121,7 +121,7 @@ def article(cookies, a_log, scores):
 
 
 def video(cookies, v_log, scores):
-    if scores["video_num"] < 6 or scores["video_time"] < 10:
+    if scores["video_num"] < 6 or scores["video_time"] < 6:
         driver_video = mydriver.Mydriver(nohead=nohead)
         driver_video.get_url("https://www.xuexi.cn/notFound.html")
         driver_video.set_cookies(cookies)
@@ -186,7 +186,7 @@ def check_delay():
 
 
 def daily(cookies, d_log, scores):
-    if scores["daily"] < 6:
+    if scores["daily"] < 5:
         # driver_daily = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_daily = mydriver.Mydriver(nohead=False)
         driver_daily.driver.maximize_window()
@@ -197,12 +197,12 @@ def daily(cookies, d_log, scores):
         driver_daily.set_cookies(cookies)
         try_count = 0
 
-        if scores["daily"] < 6:
-            d_num = 6 - scores["daily"]
+        if scores["daily"] < 5:
+            d_num = 5 - scores["daily"]
             letters = list("ABCDEFGHIJKLMN")
             driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div')
-            while scores["daily"] < 6:
+            while scores["daily"] < 5:
                 try:
                     category = driver_daily.xpath_getText(
                         '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
@@ -348,7 +348,7 @@ def weekly(cookies, d_log, scores):
             toclick = dati
             for i in range(len(dati)-1,0,-1):
                 j=dati[i]
-                if("重新" in j.text):
+                if("重新" in j.text or "满分" in j.text):
                     continue
                 else:
                     toclick = j
@@ -530,7 +530,19 @@ def zhuanxiang(cookies, d_log, scores):
 #                       '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
 #                   break
             dati = driver_zhuanxiang.driver.find_elements_by_css_selector("#app .items .item button")
-            dati[-1].click()
+            toclick = dati
+            #print("专项答题列表长度：",len(toclick))
+            for i in range(len(dati)-1,-1,-1): # 从最后一个遍历到第一个
+                j=dati[i]
+                if("重新" in j.text or "满分" in j.text):
+                    continue
+                else:
+                    toclick = j
+                    toclick.click()
+                    break
+                    
+
+
             while scores["zhuanxiang"] < 10:
                 try:
                     category = driver_zhuanxiang.xpath_getText(
@@ -676,10 +688,10 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
     article_thread.join()
     video_thread.join()
     
-    if TechXueXi_mode in ["2"]:
+    if TechXueXi_mode in ["2", "3"]:
         print('开始每日答题……')
         daily(cookies, d_log, scores)
-    if TechXueXi_mode in ["2", "3"]:
+    if TechXueXi_mode in ["3"]:
         print('开始每周答题……')
         weekly(cookies, d_log, scores)
         print('开始专项答题……')
