@@ -23,7 +23,7 @@ def user_flag(dd_status, uname):
     else:
         # if (input("是否保存钉钉帐户密码，保存后可后免登陆学习(Y/N) ")) not in ["y", "Y"]:
         if True:
-            driver_login = mydriver.Mydriver(nohead=False)
+            driver_login = Mydriver(nohead=False)
             cookies = driver_login.login()
             driver_login.quit()
         else:
