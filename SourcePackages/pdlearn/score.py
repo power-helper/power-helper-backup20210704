@@ -2,18 +2,25 @@ import requests
 from requests.cookies import RequestsCookieJar
 import json
 
+# 总积分
+# https://pc-api.xuexi.cn/open/api/score/get?_t=1608769882241
+# 今日积分
+# https://pc-api.xuexi.cn/open/api/score/today/query
 
 def get_score(cookies):
     try:
         jar = RequestsCookieJar()
         for cookie in cookies:
             jar.set(cookie['name'], cookie['value'])
-        total = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
+        total_json = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
                              headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
-        total = int(json.loads(total)["data"]["score"])
+        total = int(json.loads(total_json)["data"]["score"])
         score_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
-                             headers={'Cache-Control': 'no-cache'}).content.decode(
-            "utf8")
+                             headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
+        today_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/query", cookies=jar,
+                             headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
+        today = 0
+        today = int(json.loads(today_json)["data"]["score"])
         dayScoreDtos = json.loads(score_json)["data"]["dayScoreDtos"]
         rule_list = [1, 2, 9, 1002, 1003, 6, 5, 4]
         score_list= [0, 0, 0, 0   , 0   , 0, 0, 0, 0, 0] # 长度为十
