@@ -8,11 +8,13 @@ import random
 from pdlearn import version
 from pdlearn import user
 from pdlearn import dingding
-from pdlearn import mydriver
 from pdlearn import score
 from pdlearn import threads
 from pdlearn import get_links
-from pdlearn.mydriver import Mydriver
+from pdlearn.mydriver        import Mydriver
+from pdlearn.score           import show_score
+from pdlearn.article_video   import *
+from pdlearn.answer_question import *
 
 
 def user_flag(dd_status, uname):

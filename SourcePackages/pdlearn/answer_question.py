@@ -1,9 +1,11 @@
-
+import time
+from pdlearn.mydriver        import Mydriver
+from pdlearn.score           import show_score
 
 def daily(cookies, d_log, scores):
     if scores["daily"] < 5:
-        # driver_daily = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
-        driver_daily = mydriver.Mydriver(nohead=False)
+        # driver_daily = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
+        driver_daily = Mydriver(nohead=False)
         driver_daily.driver.maximize_window()
         print('请保持窗口最大化')
         print('请保持窗口最大化')
@@ -127,8 +129,8 @@ def daily(cookies, d_log, scores):
 
 def weekly(cookies, d_log, scores):
     if scores["weekly"] < 5:
-        # driver_weekly = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
-        driver_weekly = mydriver.Mydriver(nohead=False)
+        # driver_weekly = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
+        driver_weekly = Mydriver(nohead=False)
         driver_weekly.driver.maximize_window()
         print('请保持窗口最大化')
         print('请保持窗口最大化')
@@ -317,8 +319,8 @@ def weekly(cookies, d_log, scores):
 
 def zhuanxiang(cookies, d_log, scores):
     if scores["zhuanxiang"] < 10:
-        # driver_zhuanxiang = mydriver.Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
-        driver_zhuanxiang = mydriver.Mydriver(nohead=False)
+        # driver_zhuanxiang = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
+        driver_zhuanxiang = Mydriver(nohead=False)
         driver_zhuanxiang.driver.maximize_window()
         print('请保持窗口最大化')
         print('请保持窗口最大化')

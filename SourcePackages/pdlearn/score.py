@@ -9,7 +9,7 @@ import json
 
 
 def show_score(cookies):
-    total, scores = score.get_score(cookies)
+    total, scores = get_score(cookies)
     print("当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"]))
     # print("阅读文章:{}/6,观看视频:{}/6,登陆:{}/1,文章时长:{}/6,视频时长:{}/6,每日答题:{}/5,每周答题:{}/5,专项答题:{}/10".format(*ea_ch))
     print("阅读文章:",scores["article_num"],"/6,观看视频:",scores["video_num"],"/6,登陆:",scores["login"],"/1,文章时长:",scores["article_time"],"/6,视频时长:",scores["video_time"],"/6,每日答题:",scores["daily"],"/5,每周答题:",scores["weekly"],"/5,专项答题:",scores["zhuanxiang"],"/10")
