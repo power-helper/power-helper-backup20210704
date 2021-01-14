@@ -602,6 +602,8 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
       （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
     3 每日答题+文章+视频
       （可以根据当日已得做题积分，决定是否做题）
+    4 专项答题+文章+视频
+      （可以根据当日已得做题积分，决定是否做题）
 ''',"=" * 120)
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 
@@ -619,6 +621,9 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
     if TechXueXi_mode in ["2"]:
         print('开始每周答题……')
         weekly(cookies, d_log, each)
+        print('开始专项答题……')
+        zhuanxiang(cookies, d_log, each)
+    if TechXueXi_mode in ["4"]:
         print('开始专项答题……')
         zhuanxiang(cookies, d_log, each)
 
