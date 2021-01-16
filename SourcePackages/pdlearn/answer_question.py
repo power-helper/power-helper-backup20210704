@@ -1,6 +1,14 @@
 import time
+import random
 from pdlearn.mydriver        import Mydriver
 from pdlearn.score           import show_score
+
+
+def check_delay():
+    delay_time = random.randint(2, 5)
+    print('等待 ', delay_time, ' 秒')
+    time.sleep(delay_time)
+
 
 def daily(cookies, d_log, scores):
     if scores["daily"] < 5:
@@ -116,7 +124,7 @@ def daily(cookies, d_log, scores):
                 print("检测到每日答题分数已满,退出学习")
                 driver_daily.quit()
         else:
-            with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
+            with open("./user/{}/d_log".format(1), "w", encoding="utf8") as fp:
                 fp.write(str(d_log))
             # break
         try:
@@ -169,8 +177,8 @@ def weekly(cookies, d_log, scores):
                     continue
                 else:
                     toclick = j
+                    toclick.click()
                     break
-            toclick.click()
             while scores["weekly"] < 5 and try_count < 10:
 #'''                
 #=======
@@ -306,7 +314,7 @@ def weekly(cookies, d_log, scores):
                 print("检测到每周答题分数已满,退出学习")
                 driver_weekly.quit()
         else:
-            with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
+            with open("./user/{}/d_log".format(1), "w", encoding="utf8") as fp:
                 fp.write(str(d_log))
             # break
         try:
@@ -457,7 +465,7 @@ def zhuanxiang(cookies, d_log, scores):
                 print("检测到专项答题分数已满,退出学习")
                 driver_zhuanxiang.quit()
         else:
-            with open("./user/{}/d_log".format(uname), "w", encoding="utf8") as fp:
+            with open("./user/{}/d_log".format(1), "w", encoding="utf8") as fp:
                 fp.write(str(d_log))
             # break
         try:

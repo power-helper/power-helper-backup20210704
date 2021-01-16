@@ -4,13 +4,11 @@ import time
 import math
 from time import sleep
 from sys import argv
-import random
 from pdlearn import version
 from pdlearn import user
 from pdlearn import dingding
 from pdlearn import score
 from pdlearn import threads
-from pdlearn import get_links
 from pdlearn.mydriver        import Mydriver
 from pdlearn.score           import show_score
 from pdlearn.article_video   import *
@@ -53,12 +51,6 @@ def get_argv():
         if argv[4].isdigit():
             stime = argv[4]
     return nohead, lock, stime
-
-
-def check_delay():
-    delay_time = random.randint(2, 5)
-    print('等待 ', delay_time, ' 秒')
-    time.sleep(delay_time)
 
 
 if __name__ == '__main__':

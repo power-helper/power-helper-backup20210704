@@ -1,10 +1,13 @@
 import time
+import random
+from pdlearn import get_links
 from pdlearn.mydriver        import Mydriver
 from pdlearn.score           import show_score
 
 def article(cookies, a_log, scores):
     if scores["article_num"] < 6 or scores["article_time"] < 6:
-        driver_article = Mydriver(nohead=nohead)
+        #driver_article = Mydriver(nohead=nohead)
+        driver_article = Mydriver(nohead=True)
         driver_article.get_url("https://www.xuexi.cn/notFound.html")
         driver_article.set_cookies(cookies)
         links = get_links.get_article_links()
@@ -28,7 +31,7 @@ def article(cookies, a_log, scores):
                         break
                 a_log += a_num
             else:
-                with open("./user/{}/a_log".format(uname), "w", encoding="utf8") as fp:
+                with open("./user/{}/a_log".format(1), "w", encoding="utf8") as fp:
                     fp.write(str(a_log))
                 break
         try_count = 0
@@ -63,7 +66,8 @@ def article(cookies, a_log, scores):
 
 def video(cookies, v_log, scores):
     if scores["video_num"] < 6 or scores["video_time"] < 6:
-        driver_video = Mydriver(nohead=nohead)
+        #driver_video = Mydriver(nohead=nohead)
+        driver_video = Mydriver(nohead=True)
         driver_video.get_url("https://www.xuexi.cn/notFound.html")
         driver_video.set_cookies(cookies)
         links = get_links.get_video_links()
@@ -87,7 +91,7 @@ def video(cookies, v_log, scores):
                         break
                 v_log += v_num
             else:
-                with open("./user/{}/v_log".format(uname), "w", encoding="utf8") as fp:
+                with open("./user/{}/v_log".format(1), "w", encoding="utf8") as fp:
                     fp.write(str(v_log))
                 break
         try_count = 0
