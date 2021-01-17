@@ -32,19 +32,19 @@ def get_argv():
     nohead = True
     lock = False
     stime = False
-    if len(argv) > 2:
-        if argv[2] == "hidden":
+    if len(argv) > 1:
+        if argv[1] == "hidden":
             nohead = True
-        elif argv[2] == "show":
+        elif argv[1] == "show":
             nohead = False
-    if len(argv) > 3:
-        if argv[3] == "single":
+    if len(argv) > 2:
+        if argv[2] == "single":
             lock = True
-        elif argv[3] == "multithread":
+        elif argv[2] == "multithread":
             lock = False
-    if len(argv) > 4:
-        if argv[4].isdigit():
-            stime = argv[4]
+    if len(argv) > 3:
+        if argv[3].isdigit():
+            stime = argv[3]
     return nohead, lock, stime
 
 
