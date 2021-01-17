@@ -72,7 +72,8 @@ def article(cookies, a_log, each):
                     readarticle_time = 60 + random.randint(5, 15)
                     for j in range(readarticle_time):
                         if random.random() > 0.5:
-                            driver_article.go_js('window.scrollTo(0, document.body.scrollHeight/120*{})'.format(j))
+                            j_plus = j + random.random()  # 将每次下划在j的基础上增加一个[0,1)的随机数
+                            driver_article.go_js('window.scrollTo(0, document.body.scrollHeight/120*{})'.format(j_plus))
                         print("\r文章学习中，文章剩余{}篇,本篇剩余时间{}秒".format(a_log + a_num - i, readarticle_time - j), end="")
                         time.sleep(1)
                     driver_article.go_js('window.scrollTo(0, document.body.scrollHeight)')
@@ -93,8 +94,9 @@ def article(cookies, a_log, each):
                 remaining = (6 - each[3]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
+                        i_plus = i + random.random()  # 将每次下划在i的基础上增加一个[0,1)的随机数
                         driver_article.go_js(
-                            'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i))
+                            'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i_plus))
                     print("\r文章时长学习中，文章总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
                     if i % (60) == 0 and i != remaining:
@@ -131,7 +133,8 @@ def video(cookies, v_log, each):
                     watchvideo_time = 60 + random.randint(5, 15)
                     for j in range(watchvideo_time):
                         if random.random() > 0.5:
-                            driver_video.go_js('window.scrollTo(0, document.body.scrollHeight/180*{})'.format(j))
+                            j_plus = j + random.random()  # 将每次下划在j的基础上增加一个[0,1)的随机数
+                            driver_video.go_js('window.scrollTo(0, document.body.scrollHeight/180*{})'.format(j_plus))
                         print("\r视频学习中，视频剩余{}个,本次剩余时间{}秒".format(v_log + v_num - i, watchvideo_time - j), end="")
                         time.sleep(1)
                     driver_video.go_js('window.scrollTo(0, document.body.scrollHeight)')
@@ -152,8 +155,9 @@ def video(cookies, v_log, each):
                 remaining = (6 - each[4]) * 1 * num_time
                 for i in range(remaining):
                     if random.random() > 0.5:
+                        i_plus = i + random.random()  # 将每次下划在i的基础上增加一个[0,1)的随机数
                         driver_video.go_js(
-                            'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i))
+                            'window.scrollTo(0, document.body.scrollHeight/{}*{})'.format(remaining, i_plus))
                     print("\r视频学习中，视频总时长剩余{}秒".format(remaining - i), end="")
                     time.sleep(1)
                     if i % (60) == 0 and i != remaining:
