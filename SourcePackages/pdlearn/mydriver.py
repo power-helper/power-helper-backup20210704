@@ -55,6 +55,10 @@ class Mydriver:
 
             self.options.add_argument('--user-agent={}'.format(user_agent.getheaders()))
             self.options.add_experimental_option('excludeSwitches', ['enable-automation'])  # 绕过js检测
+            # 在chrome79版本之后，上面的实验选项已经不能屏蔽webdriver特征了
+            # 屏蔽webdriver特征
+            self.options.add_argument("--disable-blink-features")
+            self.options.add_argument("--disable-blink-features=AutomationControlled")
             self.webdriver = webdriver
             if os.path.exists("./chrome/chromedriver.exe"):  # win
                 self.driver = self.webdriver.Chrome(executable_path="./chrome/chromedriver.exe",
