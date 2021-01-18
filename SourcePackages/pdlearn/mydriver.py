@@ -240,7 +240,8 @@ class Mydriver:
             except Exception as e:
                 print("点击", check_option, '失败！')
         self.check_delay()
-        submit = WebDriverWait(self.driver, 15).until(lambda driver: driver.find_element_by_class_name("action-row").find_elements_by_xpath("button"))
+        submit = WebDriverWait(self.driver, 15).until(
+            lambda driver: driver.find_element_by_class_name("action-row").find_elements_by_xpath("button"))
         if len(submit) > 1:
             self.click_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]')
             print("成功点击交卷！")

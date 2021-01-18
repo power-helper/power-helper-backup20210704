@@ -9,9 +9,9 @@ from pdlearn import user
 from pdlearn import dingding
 from pdlearn import score
 from pdlearn import threads
-from pdlearn.mydriver        import Mydriver
-from pdlearn.score           import show_score
-from pdlearn.article_video   import *
+from pdlearn.mydriver import Mydriver
+from pdlearn.score import show_score
+from pdlearn.article_video import *
 from pdlearn.answer_question import *
 
 
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     #  0 读取版本信息
     start_time = time.time()
 
-    print("=" * 60,'''
+    print("=" * 60, '''
     科技强国官方网站：https://techxuexi.js.org
     Github地址：https://github.com/TechXueXi
 使用本项目，必须接受以下内容，否则请立即退出：
@@ -72,9 +72,9 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
       （可以根据当日已得做题积分，决定是否做题）
     3 文章+视频+每日答题+每周答题+专项答题
       （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
-''',"=" * 60)
+''', "=" * 60)
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
-    
+
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
     info_shread.start()
     #  1 创建用户标记，区分多个用户历史纪录
@@ -82,14 +82,14 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
     cookies, a_log, v_log, d_log = user_flag(dd_status, uname)
     total, scores = show_score(cookies)
     nohead, lock, stime = get_argv()
-    
+
     article_thread = threads.MyThread("文章学习", article, cookies, a_log, scores, lock=lock)
     video_thread = threads.MyThread("视频学习", video, cookies, v_log, scores, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
     video_thread.join()
-    
+
     if TechXueXi_mode in ["2", "3"]:
         print('开始每日答题……')
         daily(cookies, d_log, scores)
@@ -98,7 +98,7 @@ TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不�
         weekly(cookies, d_log, scores)
         print('开始专项答题……')
         zhuanxiang(cookies, d_log, scores)
-    
+
     seconds_used = int(time.time() - start_time)
     print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
     user.shutdown(stime)

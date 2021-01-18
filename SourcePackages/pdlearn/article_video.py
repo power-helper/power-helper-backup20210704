@@ -1,12 +1,13 @@
 import time
 import random
 from pdlearn import get_links
-from pdlearn.mydriver        import Mydriver
-from pdlearn.score           import show_score
+from pdlearn.mydriver import Mydriver
+from pdlearn.score import show_score
+
 
 def article(cookies, a_log, scores):
     if scores["article_num"] < 6 or scores["article_time"] < 6:
-        #driver_article = Mydriver(nohead=nohead)
+        # driver_article = Mydriver(nohead=nohead)
         driver_article = Mydriver(nohead=True)
         driver_article.get_url("https://www.xuexi.cn/notFound.html")
         driver_article.set_cookies(cookies)
@@ -66,7 +67,7 @@ def article(cookies, a_log, scores):
 
 def video(cookies, v_log, scores):
     if scores["video_num"] < 6 or scores["video_time"] < 6:
-        #driver_video = Mydriver(nohead=nohead)
+        # driver_video = Mydriver(nohead=nohead)
         driver_video = Mydriver(nohead=True)
         driver_video.get_url("https://www.xuexi.cn/notFound.html")
         driver_video.set_cookies(cookies)
@@ -122,4 +123,3 @@ def video(cookies, v_log, scores):
         driver_video.quit()
     else:
         print("视频之前学完了")
-
