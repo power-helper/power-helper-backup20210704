@@ -4,7 +4,7 @@
 
 **下载地址：https://github.com/TechXueXi/TechXueXi/releases**
 
-（如使用源码，请使用主分支。请勿使用 dev 分支，该分支仅用于同步开发）
+（如使用源码，请使用主分支。请勿使用 dev 分支，该分支用于存放正在开发的代码，不保证稳定、可用，可能造成问题）
 
 > 本项目基于某已终止的项目，请自行搜索后前往star。我们由衷地敬佩这个领域的先锋们
 ![](https://raw.githubusercontent.com/TechXueXi/TechXueXi/master/img_folder/banner.jpg)
@@ -19,7 +19,7 @@
 
 本项目维护计划、路线图参见 https://github.com/TechXueXi/TechXueXi/projects/1
 
-如您参与贡献，请注意：维护计划、路线图中每一条未列至"Done"下时，仅可在 dev 分支改动。网站改版的修改可同时提交至dev和master。
+如您参与贡献，请注意：维护计划、路线图中每一条未列至"Done"下时，仅可在 dev 分支改动。
 
 ### [👨‍👨‍👦‍👦   直接参与贡献](https://github.com/TechXueXi/TechXueXi/blob/master/CONTRIBUTING.md)(内附提交方法)
 
