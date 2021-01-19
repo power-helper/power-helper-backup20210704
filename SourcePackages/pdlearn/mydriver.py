@@ -55,6 +55,10 @@ class Mydriver:
 
             self.options.add_argument('--user-agent={}'.format(user_agent.getheaders()))
             self.options.add_experimental_option('excludeSwitches', ['enable-automation'])  # 绕过js检测
+            # 在chrome79版本之后，上面的实验选项已经不能屏蔽webdriver特征了
+            # 屏蔽webdriver特征
+            self.options.add_argument("--disable-blink-features")
+            self.options.add_argument("--disable-blink-features=AutomationControlled")
             self.webdriver = webdriver
             if os.path.exists("./chrome/chromedriver.exe"):  # win
                 self.driver = self.webdriver.Chrome(executable_path="./chrome/chromedriver.exe",
@@ -240,7 +244,8 @@ class Mydriver:
             except Exception as e:
                 print("点击", check_option, '失败！')
         self.check_delay()
-        submit = WebDriverWait(self.driver, 15).until(lambda driver: driver.find_element_by_class_name("action-row").find_elements_by_xpath("button"))
+        submit = WebDriverWait(self.driver, 15).until(
+            lambda driver: driver.find_element_by_class_name("action-row").find_elements_by_xpath("button"))
         if len(submit) > 1:
             self.click_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]')
             print("成功点击交卷！")
