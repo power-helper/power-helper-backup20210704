@@ -13,6 +13,9 @@ from pdlearn.mydriver import Mydriver
 from pdlearn.score import show_score
 from pdlearn.article_video import *
 from pdlearn.answer_question import *
+from configparser import ConfigParser
+cfg = ConfigParser()
+cfg.read('./config/main.ini', encoding='utf-8')
 
 
 def user_flag(dd_status, uname):
@@ -67,12 +70,8 @@ if __name__ == '__main__':
 另外，我们建议你参与一个维护劳动法的项目：
 https://996.icu/ 或 https://github.com/996icu/996.ICU/blob/master/README_CN.md
 TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：
-    1 文章+视频
-    2 文章+视频+每日答题
-      （可以根据当日已得做题积分，决定是否做题）
-    3 文章+视频+每日答题+每周答题+专项答题
-      （可以根据当日已得做题积分，及是否有可得分套题，决定是否做题）
-''', "=" * 60)
+''',cfg['base']['ModeText'], '''
+''',"=" * 60)
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
