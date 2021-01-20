@@ -71,7 +71,7 @@ if __name__ == '__main__':
 https://996.icu/ 或 https://github.com/996icu/996.ICU/blob/master/README_CN.md
 TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：
 ''',cfg['base']['ModeText'], '''
-''',"=" * 60)
+''',"=" * 60)# 模式提示文字请在 ./config/main.ini 处修改。
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
