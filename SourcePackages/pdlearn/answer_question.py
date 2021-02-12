@@ -2,6 +2,7 @@ import time
 import random
 from pdlearn.mydriver import Mydriver
 from pdlearn.score import show_score
+from pdlearn.const import const
 
 
 def check_delay():
@@ -11,7 +12,7 @@ def check_delay():
 
 
 def daily(cookies, d_log, scores):
-    if scores["daily"] < 5:
+    if scores["daily"] < const.daily_all:
         # driver_daily = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_daily = Mydriver(nohead=False)
         driver_daily.driver.maximize_window()
@@ -22,12 +23,12 @@ def daily(cookies, d_log, scores):
         driver_daily.set_cookies(cookies)
         try_count = 0
 
-        if scores["daily"] < 5:
-            d_num = 5 - scores["daily"]
+        if scores["daily"] < const.daily_all:
+            d_num = const.daily_all - scores["daily"]
             letters = list("ABCDEFGHIJKLMN")
             driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div')
-            while scores["daily"] < 5:
+            while scores["daily"] < const.daily_all:
                 try:
                     category = driver_daily.xpath_getText(
                         '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
@@ -120,7 +121,7 @@ def daily(cookies, d_log, scores):
                 d_log += d_num
 
             total, scores = show_score(cookies)
-            if scores["daily"] >= 5:
+            if scores["daily"] >= const.daily_all:
                 print("检测到每日答题分数已满,退出学习")
                 driver_daily.quit()
         else:
@@ -136,7 +137,7 @@ def daily(cookies, d_log, scores):
 
 
 def weekly(cookies, d_log, scores):
-    if scores["weekly"] < 5:
+    if scores["weekly"] < const.weekly_all:
         # driver_weekly = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_weekly = Mydriver(nohead=False)
         driver_weekly.driver.maximize_window()
@@ -147,8 +148,8 @@ def weekly(cookies, d_log, scores):
         driver_weekly.set_cookies(cookies)
         try_count = 0
 
-        if scores["weekly"] < 5:
-            d_num = 6 - scores["weekly"]
+        if scores["weekly"] < const.weekly_all:
+            d_num = const.weekly_all - scores["weekly"]
             letters = list("ABCDEFGHIJKLMN")
             driver_weekly.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_weekly.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div')
@@ -179,7 +180,7 @@ def weekly(cookies, d_log, scores):
                     toclick = j
                     toclick.click()
                     break
-            while scores["weekly"] < 5 and try_count < 10:
+            while scores["weekly"] < const.weekly_all and try_count < 10:
                 # '''
                 # =======
                 #            flag = 1
@@ -310,7 +311,7 @@ def weekly(cookies, d_log, scores):
                 d_log += d_num
 
             total, scores = show_score(cookies)
-            if scores["weekly"] >= 5:
+            if scores["weekly"] >= const.weekly_all:
                 print("检测到每周答题分数已满,退出学习")
                 driver_weekly.quit()
         else:
@@ -326,7 +327,7 @@ def weekly(cookies, d_log, scores):
 
 
 def zhuanxiang(cookies, d_log, scores):
-    if scores["zhuanxiang"] < 10:
+    if scores["zhuanxiang"] < const.zhuanxiang_all:
         # driver_zhuanxiang = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_zhuanxiang = Mydriver(nohead=False)
         driver_zhuanxiang.driver.maximize_window()
@@ -337,8 +338,8 @@ def zhuanxiang(cookies, d_log, scores):
         driver_zhuanxiang.set_cookies(cookies)
         try_count = 0
 
-        if scores["zhuanxiang"] < 10:
-            d_num = 10 - scores["zhuanxiang"]
+        if scores["zhuanxiang"] < const.zhuanxiang_all:
+            d_num = const.zhuanxiang_all - scores["zhuanxiang"]
             letters = list("ABCDEFGHIJKLMN")
             driver_zhuanxiang.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_zhuanxiang.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[7]/div[2]/div[2]/div')
@@ -366,7 +367,7 @@ def zhuanxiang(cookies, d_log, scores):
                     toclick.click()
                     break
 
-            while scores["zhuanxiang"] < 10:
+            while scores["zhuanxiang"] < const.zhuanxiang_all:
                 try:
                     category = driver_zhuanxiang.xpath_getText(
                         '//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[1]')  # get_attribute("name")
@@ -459,7 +460,7 @@ def zhuanxiang(cookies, d_log, scores):
                 d_log += d_num
 
             total, scores = show_score(cookies)
-            if scores["zhuanxiang"] >= 5:
+            if scores["zhuanxiang"] >= const.zhuanxiang_all:
                 print("检测到专项答题分数已满,退出学习")
                 driver_zhuanxiang.quit()
         else:
@@ -469,6 +470,6 @@ def zhuanxiang(cookies, d_log, scores):
         try:
             driver_zhuanxiang.quit()
         except Exception as e:
-            print('……')
+            print('浏览器退出出了一点小问题...')
     else:
         print("专项答题之前学完了")

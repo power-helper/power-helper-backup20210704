@@ -9,12 +9,13 @@ from pdlearn import user
 from pdlearn import dingding
 from pdlearn import score
 from pdlearn import threads
-from pdlearn.mydriver import Mydriver
-from pdlearn.score import show_score
-from pdlearn.article_video import *
+from pdlearn.mydriver        import Mydriver
+from pdlearn.score           import show_score
+from pdlearn.article_video   import *
 from pdlearn.answer_question import *
 from configparser import ConfigParser
 cfg = ConfigParser()
+os.chdir(sys.path[0]) # 切换pwd到python文件路径，避免找不到相对路径下的ini
 cfg.read('./config/main.ini', encoding='utf-8')
 
 
@@ -59,7 +60,7 @@ def get_argv():
 if __name__ == '__main__':
     #  0 读取版本信息
     start_time = time.time()
-    if(cfg['display']['banner'] != "false"):
+    if(cfg['display']['banner'] != "false"): # banner文本直接硬编码，不要放在ini中
         print("=" * 60 + '''
     科技强国官方网站：https://techxuexi.js.org
     Github地址：https://github.com/TechXueXi
@@ -68,8 +69,8 @@ if __name__ == '__main__':
     - 项目开源协议 LGPL-3.0
     - 不得利用本项目盈利
 另外，我们建议你参与一个维护劳动法的项目：
-https://996.icu/ 或 https://github.com/996icu/996.ICU/blob/master/README_CN.md
-TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
+https://996.icu/ 或 https://github.com/996icu/996.ICU/blob/master/README_CN.md''')
+    print("=" * 60,'''TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
     print(cfg['base']['ModeText'] + '\n' + "=" * 60) # 模式提示文字请在 ./config/main.ini 处修改。
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 
