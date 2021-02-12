@@ -70,7 +70,7 @@ if __name__ == '__main__':
     - 不得利用本项目盈利
 另外，我们建议你参与一个维护劳动法的项目：
 https://996.icu/ 或 https://github.com/996icu/996.ICU/blob/master/README_CN.md''')
-    print("=" * 60,'''TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
+    print("=" * 60, '\n', '''TechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
     print(cfg['base']['ModeText'] + '\n' + "=" * 60) # 模式提示文字请在 ./config/main.ini 处修改。
     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 

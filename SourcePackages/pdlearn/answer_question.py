@@ -172,7 +172,7 @@ def weekly(cookies, d_log, scores):
             #                       flag = 0
             dati = driver_weekly.driver.find_elements_by_css_selector("#app .month .week button")
             toclick = dati
-            for i in range(len(dati) - 1, 0, -1):
+            for i in range(len(dati)-1,-1,-1):
                 j = dati[i]
                 if ("重新" in j.text or "满分" in j.text):
                     continue
