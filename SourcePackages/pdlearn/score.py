@@ -10,8 +10,13 @@ from pdlearn.const import const
 # https://pc-api.xuexi.cn/open/api/score/today/query
 
 
+def get_userId(cookies):
+    userId, total, scores = get_score(cookies)
+    return userId
+
+
 def show_score(cookies):
-    total, scores = get_score(cookies)
+    userId, total, scores = get_score(cookies)
     print("当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"]))
     print("阅读文章:", scores["article_num"], "/", const.article_num_all, ",",
         "观看视频:", scores["video_num"], "/", const.video_num_all, ",",
@@ -32,6 +37,7 @@ def get_score(cookies):
         total_json = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
                                   headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
         total = int(json.loads(total_json)["data"]["score"])
+        userId = json.loads(total_json)["data"]["userId"]
         score_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
                                   headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
         today_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/query", cookies=jar,
@@ -57,7 +63,7 @@ def get_score(cookies):
         scores["zhuanxiang"]   = score_list[7] # 4专项答题
         
         scores["today"]        = today         # 8今日得分
-        return total, scores
+        return userId ,total, scores
     except:
         print("=" * 60)
         print("get_score 获取失败")

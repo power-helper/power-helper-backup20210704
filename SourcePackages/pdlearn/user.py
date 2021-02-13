@@ -1,6 +1,7 @@
 import os
-from time import sleep
 from sys import argv
+from time import sleep
+from pdlearn.score import get_userId
 
 
 def get_user():

@@ -1,4 +1,5 @@
 from typing import List, Any
+import pickle
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -80,7 +81,7 @@ class Mydriver:
             print("=" * 60)
             raise
 
-    def login(self):
+    def get_cookie_from_network(self):
         print("正在打开二维码登陆界面,请稍后")
         self.driver.get("https://pc.xuexi.cn/points/login.html")
         try:
@@ -109,9 +110,42 @@ class Mydriver:
             # WebDriverWait(self.driver, 270).until(EC.title_is(u"我的学习"))
             WebDriverWait(self.driver, 270).until(title_of_login())
             cookies = self.get_cookies()
+            
+            #写入文件
+            f = open('user/cookies','wb')
+            pickle.dump(cookies, f)
+            f.close()
+            
             return cookies
         except:
-            print("扫描二维码超时")
+            self.quit()
+            input("扫描二维码超时... 按回车键退出程序.")
+            exit()
+
+    def get_cookie_from_cache():
+        cookie_list = []
+        if(os.path.exists("user/cookies")):
+            with open("user/cookies", 'rb') as f:
+                cookie_list = pickle.load(f)
+                for d in cookie_list:
+                    if 'name' in d and 'value' in d and 'expiry' in d:
+                        expiry_date = int(d['expiry'])
+                        if expiry_date > (int)(time.time()):
+                            pass
+                        else:
+                            return []
+            return cookie_list
+        else:
+            return []
+
+    def login(self):
+        # cookie_list = self.get_cookie_from_cache()
+        # if not cookie_list:
+        #     print("未找到有效登录信息，需要登录")
+        # 调用前要先尝试从cookie加载，失败再login
+        cookie_list = self.get_cookie_from_network()
+        return cookie_list
+        
 
     def dd_login(self, d_name, pwd):
         __login_status = False
