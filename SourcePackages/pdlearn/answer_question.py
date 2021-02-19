@@ -11,7 +11,7 @@ def check_delay():
     time.sleep(delay_time)
 
 
-def daily(cookies, d_log, scores):
+def daily(cookies, scores):
     if scores["daily"] < const.daily_all:
         # driver_daily = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_daily = Mydriver(nohead=False)
@@ -24,7 +24,6 @@ def daily(cookies, d_log, scores):
         try_count = 0
 
         if scores["daily"] < const.daily_all:
-            d_num = const.daily_all - scores["daily"]
             letters = list("ABCDEFGHIJKLMN")
             driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div')
@@ -116,18 +115,12 @@ def daily(cookies, d_log, scores):
                     else:
                         print("题目类型非法")
                         break
-                    # print("\r每日答题中，题目剩余{}题".format(d_log + d_num - i), end="")
                     time.sleep(1)
-                d_log += d_num
 
             total, scores = show_score(cookies)
             if scores["daily"] >= const.daily_all:
                 print("检测到每日答题分数已满,退出学习")
                 driver_daily.quit()
-        else:
-            with open("./user/{}/d_log".format(1), "w", encoding="utf8") as fp:
-                fp.write(str(d_log))
-            # break
         try:
             driver_daily.quit()
         except Exception as e:
@@ -136,7 +129,7 @@ def daily(cookies, d_log, scores):
         print("每日答题之前学完了")
 
 
-def weekly(cookies, d_log, scores):
+def weekly(cookies, scores):
     if scores["weekly"] < const.weekly_all:
         # driver_weekly = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_weekly = Mydriver(nohead=False)
@@ -149,7 +142,6 @@ def weekly(cookies, d_log, scores):
         try_count = 0
 
         if scores["weekly"] < const.weekly_all:
-            d_num = const.weekly_all - scores["weekly"]
             letters = list("ABCDEFGHIJKLMN")
             driver_weekly.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_weekly.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div')
@@ -306,18 +298,12 @@ def weekly(cookies, d_log, scores):
                     else:
                         print("题目类型非法")
                         break
-                    # print("\r每周答题中，题目剩余{}题".format(d_log + d_num - i), end="")
                     time.sleep(1)
-                d_log += d_num
 
             total, scores = show_score(cookies)
             if scores["weekly"] >= const.weekly_all:
                 print("检测到每周答题分数已满,退出学习")
                 driver_weekly.quit()
-        else:
-            with open("./user/{}/d_log".format(1), "w", encoding="utf8") as fp:
-                fp.write(str(d_log))
-            # break
         try:
             driver_weekly.quit()
         except Exception as e:
@@ -326,7 +312,7 @@ def weekly(cookies, d_log, scores):
         print("每周答题之前学完了")
 
 
-def zhuanxiang(cookies, d_log, scores):
+def zhuanxiang(cookies, scores):
     if scores["zhuanxiang"] < const.zhuanxiang_all:
         # driver_zhuanxiang = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
         driver_zhuanxiang = Mydriver(nohead=False)
@@ -339,7 +325,6 @@ def zhuanxiang(cookies, d_log, scores):
         try_count = 0
 
         if scores["zhuanxiang"] < const.zhuanxiang_all:
-            d_num = const.zhuanxiang_all - scores["zhuanxiang"]
             letters = list("ABCDEFGHIJKLMN")
             driver_zhuanxiang.get_url('https://pc.xuexi.cn/points/my-points.html')
             driver_zhuanxiang.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[7]/div[2]/div[2]/div')
@@ -455,18 +440,12 @@ def zhuanxiang(cookies, d_log, scores):
                     else:
                         print("题目类型非法")
                         break
-                    # print("\r专项答题中，题目剩余{}题".format(d_log + d_num - i), end="")
                     time.sleep(1)
-                d_log += d_num
 
             total, scores = show_score(cookies)
             if scores["zhuanxiang"] >= const.zhuanxiang_all:
                 print("检测到专项答题分数已满,退出学习")
                 driver_zhuanxiang.quit()
-        else:
-            with open("./user/{}/d_log".format(1), "w", encoding="utf8") as fp:
-                fp.write(str(d_log))
-            # break
         try:
             driver_zhuanxiang.quit()
         except Exception as e:

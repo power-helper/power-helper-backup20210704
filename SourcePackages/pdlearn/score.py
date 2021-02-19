@@ -10,11 +10,6 @@ from pdlearn.const import const
 # https://pc-api.xuexi.cn/open/api/score/today/query
 
 
-def get_userId(cookies):
-    userId, total, scores = get_score(cookies)
-    return userId
-
-
 def show_score(cookies):
     userId, total, scores = get_score(cookies)
     print("当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"]))

@@ -1,5 +1,4 @@
 from typing import List, Any
-import pickle
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -7,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 from selenium.webdriver.chrome.options import Options
 from pdlearn import user_agent
+from pdlearn import user
 from bs4 import BeautifulSoup
 import lxml
 import os
@@ -111,64 +111,18 @@ class Mydriver:
             WebDriverWait(self.driver, 270).until(title_of_login())
             cookies = self.get_cookies()
             
-            #写入文件
-            f = open('user/cookies','wb')
-            pickle.dump(cookies, f)
-            f.close()
+            user.save_cookies(cookies)
             
             return cookies
-        except:
+        except Exception as e:
             self.quit()
-            input("扫描二维码超时... 按回车键退出程序.")
+            input("扫描二维码超时... 按回车键退出程序. 错误信息：" + str(e))
             exit()
 
-    def get_cookie_from_cache():
-        cookie_list = []
-        if(os.path.exists("user/cookies")):
-            with open("user/cookies", 'rb') as f:
-                cookie_list = pickle.load(f)
-                for d in cookie_list:
-                    if 'name' in d and 'value' in d and 'expiry' in d:
-                        expiry_date = int(d['expiry'])
-                        if expiry_date > (int)(time.time()):
-                            pass
-                        else:
-                            return []
-            return cookie_list
-        else:
-            return []
-
     def login(self):
-        # cookie_list = self.get_cookie_from_cache()
-        # if not cookie_list:
-        #     print("未找到有效登录信息，需要登录")
         # 调用前要先尝试从cookie加载，失败再login
         cookie_list = self.get_cookie_from_network()
         return cookie_list
-        
-
-    def dd_login(self, d_name, pwd):
-        __login_status = False
-        self.driver.get(
-            "https://login.dingtalk.com/login/index.htm?"
-            "goto=https%3A%2F%2Foapi.dingtalk.com%2Fconnect%2Foauth2%2Fsns_authorize"
-            "%3Fappid%3Ddingoankubyrfkttorhpou%26response_type%3Dcode%26scope%3Dsnsapi"
-            "_login%26redirect_uri%3Dhttps%3A%2F%2Fpc-api.xuexi.cn%2Fopen%2Fapi%2Fsns%2Fcallback"
-        )
-        self.driver.find_elements_by_id("mobilePlaceholder")[0].click()
-        self.driver.find_element_by_id("mobile").send_keys(d_name)
-        self.driver.find_elements_by_id("mobilePlaceholder")[1].click()
-        self.driver.find_element_by_id("pwd").send_keys(pwd)
-        self.driver.find_element_by_id("loginBtn").click()
-        try:
-            print("登陆中...")
-            WebDriverWait(self.driver, 2, 0.1).until(lambda driver: driver.find_element_by_class_name("modal"))
-            print(self.driver.find_element_by_class_name("modal").find_elements_by_tag_name("div")[0].text)
-            self.driver.quit()
-            __login_status = False
-        except:
-            __login_status = True
-        return __login_status
 
     def get_cookies(self):
         cookies = self.driver.get_cookies()
