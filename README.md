@@ -150,10 +150,8 @@ TechXueXi为python学习交流的开源非营利项目，仅作为程序员之�
     2. 安装所需 python 模块
 
 ```bash
-    pip install lxml
-    pip install requests
-    pip install bs4
-    pip install selenium
+    pip install -r requirements.txt
+
 ```
     3. 执行文件
     `cd SourcePackages  && python3 ./pandalearning.py`
