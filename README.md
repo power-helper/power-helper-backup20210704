@@ -143,20 +143,19 @@ TechXueXi为python学习交流的开源非营利项目，仅作为程序员之�
 **非windows系统请暂时使用源码或虚拟机运行，各位若编译了二进制文件，可以邮件我们（推荐）或提交PR，谢谢————20200428**
 
 ### mac源码使用说明
-    1. 安装chromdiriver
-    
-    `brew install chromedriver `
-    
-    2. 安装所需 python 模块
 
-```bash
-    pip install -r requirements.txt
+1. 安装chromdiriver
 
-```
-    3. 执行文件
-    `cd SourcePackages  && python3 ./pandalearning.py`
-    
-    
+        brew install chromedriver
+
+2. 安装所需 python 模块
+
+        pip install -r requirements.txt
+
+3. 执行文件
+
+        cd SourcePackages  && python3 ./pandalearning.py
+
 <!--
 [windows高速下载](https://github.com/TechXueXi/TechXueXi/releases)
 
