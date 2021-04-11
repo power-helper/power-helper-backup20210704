@@ -4,10 +4,10 @@ from configparser import ConfigParser
 
 cfg = ConfigParser()
 
-os.chdir(sys.path[0]) # 切换pwd到python文件路径，避免找不到相对路径下的ini
+#os.chdir(sys.path[0]) # 切换pwd到python文件路径，避免找不到相对路径下的ini
 if(not os.path.exists("config")):
     os.mkdir("config")
-    if(not os.path.exists("config/main.ini")):
+    if(not os.path.exists("./config/main.ini")):
         # write_default_ini()
         input("缺少配置文件 config/main.ini，请检查.")
         exit()
