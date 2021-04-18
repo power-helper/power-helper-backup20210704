@@ -232,7 +232,7 @@ win平台可能提示`无法定位程序输入点ucrtbase.terminate于动态链�
 
 ### win源码使用说明
 
-1. 下载 chromdiriver，chrome 并配置好
+1. 下载 ChromeDriver，chrome 并配置好
 
 2. 安装所需 python 模块
 
