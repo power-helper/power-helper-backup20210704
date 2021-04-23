@@ -18,7 +18,7 @@ import re
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-
+from selenium.common import exceptions
 
 class title_of_login:
     def __call__(self, driver):
@@ -129,8 +129,13 @@ class Mydriver:
         return cookies
 
     def set_cookies(self, cookies):
-        for cookie in cookies:
-            self.driver.add_cookie({k: cookie[k] for k in cookie.keys()})
+        try:
+            for cookie in cookies:
+                print(cookie)
+                self.driver.add_cookie({k: cookie[k] for k in cookie.keys()})
+                #self.driver.add_cookie(cookie)
+        except exceptions.InvalidCookieDomainException as e:
+            print(e.__str__)
 
     def get_url(self, url):
         self.driver.get(url)
