@@ -4,7 +4,7 @@ import json
 
 def check_directory(filename):
     # filename 最多支持一层文件夹下的json
-    os.chdir(sys.path[0]) # 切换pwd到python文件路径
+    # os.chdir(sys.path[0]) # 切换pwd到python文件路径
     split_filename = filename.split("/", 1)
     if(len(split_filename) > 1): # 包含一层文件夹
         if(not os.path.exists(split_filename[0])):
