@@ -354,6 +354,7 @@ def getheaders():
         # "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_8; zh-cn) AppleWebKit/533.18.1 (KHTML, like Gecko) Version/5.0.2 Safari/533.18.5"
     ]
     UserAgent = random.choice(fake_useragent_0_1_11)  # --这里只用list1-- 这里只用fake_useragent_0_1_11
-    headers = {'User-Agent': UserAgent}
+    # headers = {'User-Agent': UserAgent}
     # headers = {'User-Agent': "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36"}
-    return headers
+    # return headers
+    return UserAgent
