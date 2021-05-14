@@ -7,6 +7,8 @@ from selenium.common import exceptions
 from selenium.webdriver.chrome.options import Options
 from pdlearn import user_agent
 from pdlearn import user
+from pdlearn.dingding import DingDingHandler
+from pdlearn.config import cfg
 from bs4 import BeautifulSoup
 import lxml
 import os
@@ -106,6 +108,12 @@ class Mydriver:
         else:
             self.driver.execute_script('arguments[0].remove()', remover)
             self.driver.execute_script('window.scrollTo(document.body.scrollWidth/2 - 200 , 0)')
+
+        # 取出iframe中二维码，并发往钉钉
+        if cfg["addition"]["SendLoginQRcode"] == "1":
+            print("二维码将发往钉钉机器人...\n" + "=" * 60)
+            self.toDingDing()
+
         try:
             # WebDriverWait(self.driver, 270).until(EC.title_is(u"我的学习"))
             WebDriverWait(self.driver, 270).until(title_of_login())
@@ -118,6 +126,25 @@ class Mydriver:
             self.quit()
             input("扫描二维码超时... 按回车键退出程序. 错误信息：" + str(e))
             exit()
+
+    def toDingDing(self):
+        try:
+            # 获取iframe内的二维码
+            self.driver.switch_to.frame(
+                self.driver.find_element_by_id("ddlogin-iframe")
+            )
+            img = WebDriverWait(self.driver, 30, 0.2).until(
+                lambda driver: driver.find_element_by_tag_name("img")
+            )
+            path = img.get_attribute("src")
+            self.driver.switch_to.default_content()
+        except exceptions.TimeoutException:
+            print("当前网络缓慢...")
+        else:
+            token = cfg["addition"]["token"]
+            secret = cfg["addition"]["secret"]
+            ddhandler = DingDingHandler(token, secret)
+            ddhandler.ddmsgsend(path)
 
     def login(self):
         # 调用前要先尝试从cookie加载，失败再login
