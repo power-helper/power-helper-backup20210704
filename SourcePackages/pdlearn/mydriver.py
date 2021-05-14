@@ -130,10 +130,14 @@ class Mydriver:
 
     def set_cookies(self, cookies):
         try:
+            # 解决Chrome 90版本无法运行的问题[https://github.com/TechXueXi/TechXueXi/issues/78]
             for cookie in cookies:
-                print(cookie)
-                self.driver.add_cookie({k: cookie[k] for k in cookie.keys()})
-                #self.driver.add_cookie(cookie)
+                if cookie['domain'] == 'pc.xuexi.cn':
+                    self.driver.get("https://pc.xuexi.cn/")
+                if cookie['domain'] == '.xuexi.cn':
+                    self.driver.get("https://www.xuexi.cn/")
+                # print(f'current cookie: {cookie}')
+                self.driver.add_cookie(cookie)
         except exceptions.InvalidCookieDomainException as e:
             print(e.__str__)
 
