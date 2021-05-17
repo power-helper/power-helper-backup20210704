@@ -128,10 +128,17 @@ class Mydriver:
             exit()
 
     def toDingDing(self):
+        token = cfg["addition"]["token"]
+        secret = cfg["addition"]["secret"]
+        ddhandler = DingDingHandler(token, secret)
+        ddhandler.ddmsgsend(self.getQRcode())
+
+    def getQRcode(self):
         try:
             # 获取iframe内的二维码
             self.driver.switch_to.frame(
-                self.driver.find_element_by_id("ddlogin-iframe")
+                WebDriverWait(self.driver, 30, 0.2).until(
+                lambda driver: driver.find_element_by_id("ddlogin-iframe"))
             )
             img = WebDriverWait(self.driver, 30, 0.2).until(
                 lambda driver: driver.find_element_by_tag_name("img")
@@ -141,10 +148,7 @@ class Mydriver:
         except exceptions.TimeoutException:
             print("当前网络缓慢...")
         else:
-            token = cfg["addition"]["token"]
-            secret = cfg["addition"]["secret"]
-            ddhandler = DingDingHandler(token, secret)
-            ddhandler.ddmsgsend(path)
+            return path
 
     def login(self):
         # 调用前要先尝试从cookie加载，失败再login
