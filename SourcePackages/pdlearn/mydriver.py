@@ -109,6 +109,7 @@ class Mydriver:
             self.driver.execute_script('arguments[0].remove()', remover)
             self.driver.execute_script('window.scrollTo(document.body.scrollWidth/2 - 200 , 0)')
 
+
         try: 
             # 取出iframe中二维码，并发往钉钉
             if cfg["addition"]["SendLoginQRcode"] == "1":
@@ -116,6 +117,7 @@ class Mydriver:
                 self.toDingDing()
         except KeyError as e:
             print("未检测到SendLoginQRcode配置，请手动扫描二维码登陆...")
+
 
         try:
             # WebDriverWait(self.driver, 270).until(EC.title_is(u"我的学习"))
