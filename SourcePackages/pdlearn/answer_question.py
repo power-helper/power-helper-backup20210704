@@ -3,6 +3,7 @@ import random
 from pdlearn.mydriver import Mydriver
 from pdlearn.score import show_score
 from pdlearn.const import const
+from pdlearn.log import *
 
 
 def check_delay():
@@ -26,19 +27,30 @@ def daily(cookies, scores):
         if scores["daily"] < const.daily_all:
             letters = list("ABCDEFGHIJKLMN")
             driver_daily.get_url('https://pc.xuexi.cn/points/my-points.html')
-            driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div')
+            driver_daily.click_xpath('//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div') #点击每日答题的去答题按钮
             while scores["daily"] < const.daily_all:
                 try:
-                    category = driver_daily.xpath_getText(
+                    category = driver_daily.xpath_getText( #获取题目类型
                         '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')  # get_attribute("name")
                 except Exception as e:
-                    print('查找元素失败！')
+                    print('查找题目类型...查找元素失败！')
                     break
                 print(category)
-                tips = driver_daily._view_tips()
-                check_delay()
+                log_daily("\n====================")
+                log_daily(log_timestamp())
+                log_daily("【"+category+"】")
+                log_daily("【题干】")
+                q_body = driver_daily.driver.find_element_by_css_selector(".q-body")
+                q_html = q_body.get_attribute('innerHTML')
+                q_text = q_body.text
+                print(q_text)
+                log_daily(q_html)
+                tips, tip_full_text = driver_daily._view_tips()
+                log_daily("【提示信息】")
+                log_daily(str(tips)+"\n"+tip_full_text)
                 if not tips:
                     print("本题没有提示")
+                    log_daily("！！！！！本题没有找到提示，暂时略过！！！！！")
                     if "填空题" in category:
                         print('没有找到提示，暂时略过')
                         continue
@@ -51,6 +63,7 @@ def daily(cookies, scores):
                         # return driver_daily._search(driver_daily.content, driver_daily.options, driver_daily.excludes)
                     else:
                         print("题目类型非法")
+                        log_daily("！！！！！无提示，题目类型非法！！！！！")
                         break
                 else:
                     if "填空题" in category:
@@ -59,6 +72,8 @@ def daily(cookies, scores):
 
                     elif "多选题" in category:
                         options = driver_daily.radio_get_options()
+                        log_daily("【多选题选项】")
+                        log_daily(str(options))
                         radio_in_tips, radio_out_tips = "", ""
                         for letter, option in zip(letters, options):
                             for tip in tips:
@@ -69,7 +84,8 @@ def daily(cookies, scores):
                         radio_out_tips = [letter for letter, option in zip(letters, options) if
                                           (letter not in radio_in_tips)]
 
-                        print('含 ', radio_in_tips, '不含', radio_out_tips)
+                        print('包含提示的选项 ', radio_in_tips, '，不包含提示的选项 ', radio_out_tips)
+                        log_daily('包含提示的选项 '+str(radio_in_tips)+'，不包含提示的选项 '+str(radio_out_tips))
                         if len(radio_in_tips) > 1:  # and radio_in_tips not in driver_daily.excludes:
                             print('根据提示', radio_in_tips)
                             driver_daily.radio_check(radio_in_tips)
@@ -78,11 +94,15 @@ def daily(cookies, scores):
                             driver_daily.radio_check(radio_out_tips)
                         # return driver_daily._search(content, options, excludes)
                         else:
-                            print('无法根据提示判断，准备搜索……')
+                            print('无法根据提示判断，请自行答题……')
+                            log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
                     elif "单选题" in category:
                         options = driver_daily.radio_get_options()
-                        if '因此本题选' in tips:
+                        log_daily("【单选题选项】")
+                        log_daily(str(options))
+                        if '因此本题选' in tips: #提示类型1
                             check = [x for x in letters if x in tips]
+                            log_daily("根据提示类型1，选择答案："+str(check))
                             driver_daily.radio_check(check)
                         else:
                             radio_in_tips, radio_out_tips = "", ""
@@ -102,7 +122,8 @@ def daily(cookies, scores):
                                         if letter not in radio_out_tips:
                                             radio_out_tips += letter
 
-                            print('含 ', radio_in_tips, '不含', radio_out_tips)
+                            print('包含提示的选项 ', radio_in_tips, '，不包含提示的选项 ', radio_out_tips)
+                            log_daily('包含提示的选项 '+str(radio_in_tips)+'，不包含提示的选项 '+str(radio_out_tips))
                             if 1 == len(radio_in_tips):  # and radio_in_tips not in driver_daily.excludes:
                                 print('根据提示', radio_in_tips)
                                 driver_daily.radio_check(radio_in_tips)
@@ -111,20 +132,21 @@ def daily(cookies, scores):
                                 driver_daily.radio_check(radio_out_tips)
                             # return driver_daily._search(content, options, excludes)
                             else:
-                                print('无法根据提示判断，准备搜索……')
+                                print('无法根据提示判断，请自行答题……')
+                                log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
                     else:
                         print("题目类型非法")
+                        log_daily("！！！！！有提示，但题目类型非法！！！！！")
                         break
                     time.sleep(1)
 
-            total, scores = show_score(cookies)
-            if scores["daily"] >= const.daily_all:
-                print("检测到每日答题分数已满,退出学习")
-                driver_daily.quit()
+                total, scores = show_score(cookies)
+                if scores["daily"] >= const.daily_all:
+                    print("检测到每日答题分数已满,退出学习")
         try:
             driver_daily.quit()
         except Exception as e:
-            print('……')
+            print('driver_daily quit fail...')
     else:
         print("每日答题之前学完了")
 
@@ -218,7 +240,7 @@ def weekly(cookies, scores):
                     print('查找元素失败！')
                     break
                 print(category)
-                tips = driver_weekly._view_tips()
+                tips, tip_full_text = driver_weekly._view_tips()
                 check_delay()
                 if not tips:
                     print("本题没有提示")
@@ -360,7 +382,7 @@ def zhuanxiang(cookies, scores):
                     print('查找元素失败！')
                     break
                 print(category)
-                tips = driver_zhuanxiang._view_tips()
+                tips, tip_full_text = driver_zhuanxiang._view_tips()
                 check_delay()
                 if not tips:
                     print("本题没有提示")
