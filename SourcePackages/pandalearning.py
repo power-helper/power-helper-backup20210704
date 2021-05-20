@@ -37,7 +37,9 @@ def get_argv():
 
 if __name__ == '__main__':
     # 注：不要再pandalearning.py之外使用os.chdir(sys.path[0])，否则可能造成打包程序不能运行
-    os.chdir(sys.path[0]) # 切换pwd到python文件路径，避免找不到相对路径下的ini和相关文件
+    # 切换pwd到python文件路径，避免找不到相对路径下的ini和相关文件
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath('.'))
+    os.chdir(base_path)
     #  0 读取版本信息
     start_time = time.time()
     if(cfg['display']['banner'] != "false"): # banner文本直接硬编码，不要放在ini中
