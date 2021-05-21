@@ -1,5 +1,6 @@
 import os
 import sys
+from pdlearn.initial import *
 from configparser import ConfigParser
 
 cfg = ConfigParser()
@@ -9,10 +10,10 @@ base_path = getattr(sys, '_MEIPASS', os.path.abspath('.'))
 os.chdir(base_path)
 if(not os.path.exists("config")):
     os.mkdir("config")
-    if(not os.path.exists("./config/main.ini")):
-        # write_default_ini()
-        input("缺少配置文件 config/main.ini，请检查.")
-        exit()
+if(not os.path.exists("./config/main.ini")):
+    init_main_ini()
+    # input("缺少配置文件 config/main.ini，请检查.")
+    # exit()
 cfg.read('./config/main.ini', encoding='utf-8')
 
 

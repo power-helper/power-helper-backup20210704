@@ -1,5 +1,6 @@
 from typing import List, Any
 
+import selenium
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -210,31 +211,33 @@ class Mydriver:
         # global answer
         content = ""
         try:
-            # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
-            tips_open = self.driver.find_element_by_xpath(
-                '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
-            tips_open.click()
-            print("有可点击的【查看提示】按钮")
-        except Exception as e:
-            print("没有可点击的【查看提示】按钮")
-            return ""
-        time.sleep(2)
-        try:
-            # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
-            tips_open = self.driver.find_element_by_xpath(
-                '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
-            tips_open.click()
-        except Exception as e:
-            print("关闭查看提示失败！")
-            return ""
-        try:
-            html = self.driver.page_source
-            soup1 = BeautifulSoup(html, 'lxml')
-            content = soup1.find_all('font')  # tips.get_attribute("name") ,attrs={'color'}
-            answer: List[str] = []
-        except Exception as e:
-            print('page_source failed')
-            print(e)
+            have_content = 0 #页面上没有加载提示的内容
+            have_content = self.driver.find_element_by_css_selector(".ant-popover")
+        except selenium.common.exceptions.NoSuchElementException as e: #如果是没有加载，点一下查看提示
+            try:
+                # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
+                tips_open = self.driver.find_element_by_xpath(
+                    '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
+                tips_open.click()
+                print("有可点击的【查看提示】按钮")
+            except Exception as e:
+                print("没有可点击的【查看提示】按钮")
+                return ""
+            time.sleep(1)
+            try:
+                # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
+                tips_open = self.driver.find_element_by_xpath(
+                    '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
+                tips_open.click()
+            except Exception as e:
+                print("关闭查看提示失败！没有可点击的【查看提示】按钮")
+                return ""
+        tip_div = self.driver.find_element_by_css_selector(".ant-popover .line-feed")
+        tip_full_text = tip_div.get_attribute('innerHTML')
+        html = tip_full_text
+        soup1 = BeautifulSoup(html, 'lxml')
+        content = soup1.find_all('font')  # tips.get_attribute("name") ,attrs={'color'}
+        answer: List[str] = []
         try:
             for i in content:
                 answer.append(i.text)
@@ -246,18 +249,20 @@ class Mydriver:
                 '''
             print('获取提示：', answer)
         except Exception as e:
-            print('无法查看提示内容')
+            print('无法处理提示内容，请检查日志.')
             print(e)
             return ""
-        time.sleep(2)
-
+        time.sleep(1)
         try:
-            tips_close = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')
-            tips_close.click()
+            display_tip = 0 #页面上没有加载提示的内容
+            display_tip = self.driver.find_element_by_css_selector(".ant-popover-hidden") #关闭tip则为hidden
+            if(display_tip == 0): # 没有关闭tip
+                tips_close = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')
+                tips_close.click()
         except Exception as e:
             print("没有可点击的【关闭提示】按钮")
-        time.sleep(2)
-        return answer
+        time.sleep(1)
+        return answer, tip_full_text
 
     def radio_get_options(self):
         html = self.driver.page_source
