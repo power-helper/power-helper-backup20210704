@@ -77,7 +77,7 @@ class Mydriver:
                 self.driver = self.webdriver.Chrome(executable_path="/usr/local/bin/chromedriver",
                                                     chrome_options=self.options)
             else:
-                self.driver = self.webdriver.Chrome(chrome_options=self.options)
+                self.driver = self.webdriver.Chrome(executable_path="./chrome/chromedriver.exe",chrome_options=self.options)
         except:
             print("=" * 60)
             print("Mydriver初始化失败")
