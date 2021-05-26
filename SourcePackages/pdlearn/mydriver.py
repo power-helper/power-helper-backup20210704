@@ -212,8 +212,9 @@ class Mydriver:
         content = ""
         try:
             # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
-            tips_open = self.driver.find_element_by_xpath(
-                '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
+            tips_open = WebDriverWait(self.driver, 30, 0.2).until(
+                lambda driver: driver.find_element_by_xpath(
+                    '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]'))
             tips_open.click()
             print("有可点击的【查看提示】按钮")
         except Exception as e:
