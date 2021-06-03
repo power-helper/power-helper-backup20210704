@@ -35,6 +35,14 @@ def daily(cookies, scores):
                 except Exception as e:
                     print('查找题目类型...查找元素失败！')
                     break
+                ans_results = driver_daily.driver.find_elements_by_css_selector(".practice-result .infos .info")
+                if(len(ans_results) != 0): #已经找到答题结果页面
+                    print(ans_results[0].get_attribute("innerHTML"))
+                    print(ans_results[0].text)
+                    print(ans_results[2].get_attribute("innerHTML"))
+                    print(ans_results[2].text)
+                    exit(2)
+                    break;
                 print(category)
                 log_daily("\n====================")
                 log_daily(log_timestamp())

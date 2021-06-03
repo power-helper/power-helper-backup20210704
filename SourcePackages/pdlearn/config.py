@@ -6,7 +6,7 @@ from configparser import ConfigParser
 cfg = ConfigParser()
 
 #os.chdir(sys.path[0]) # 切换pwd到python文件路径，避免找不到相对路径下的ini
-base_path = getattr(sys, '_MEIPASS', os.path.abspath('.'))
+base_path = os.path.dirname(os.path.realpath(sys.argv[0]))
 os.chdir(base_path)
 if(not os.path.exists("config")):
     os.mkdir("config")
