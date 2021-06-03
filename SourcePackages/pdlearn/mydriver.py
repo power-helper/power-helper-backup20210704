@@ -218,7 +218,7 @@ class Mydriver:
             print("有可点击的【查看提示】按钮")
         except Exception as e:
             print("没有可点击的【查看提示】按钮")
-            return ""
+            return [],""
         time.sleep(1)
         try:
             # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
@@ -227,7 +227,7 @@ class Mydriver:
             tips_open.click()
         except Exception as e:
             print("关闭查看提示失败！没有可点击的【查看提示】按钮")
-            return ""
+            return [],""
         tip_div = self.driver.find_element_by_css_selector(".ant-popover .line-feed")
         tip_full_text = tip_div.get_attribute('innerHTML')
         html = tip_full_text
@@ -247,7 +247,7 @@ class Mydriver:
         except Exception as e:
             print('无法处理提示内容，请检查日志.')
             print(e)
-            return ""
+            return [],""
         time.sleep(1)
         try:
             display_tip = 0 #页面上没有加载提示的内容
