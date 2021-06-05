@@ -15,9 +15,9 @@ def get_article_links():
             links.append(list[i]["static_page_url"])
         return links
     except:
-        print("=" * 120)
+        print("=" * 60)
         print("get_article_links获取失败")
-        print("=" * 120)
+        print("=" * 60)
         raise
 
 
@@ -31,7 +31,7 @@ def get_video_links():
         link.reverse()
         return link
     except:
-        print("=" * 120)
+        print("=" * 60)
         print("get_video_links获取失败")
-        print("=" * 120)
+        print("=" * 60)
         raise

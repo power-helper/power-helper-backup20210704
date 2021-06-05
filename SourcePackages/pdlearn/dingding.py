@@ -1,44 +1,42 @@
-import re
-from pdlearn import mydriver
-import sys
+import time
+import hmac
+import hashlib
+import base64
+import urllib.parse
+class DingDingHandler:
+    def __init__(self, token, secret):
+        self.token = token
+        self.secret = secret
 
+    def get_url(self):
+        timestamp = round(time.time() * 1000)
+        secret_enc = self.secret.encode("utf-8")
+        string_to_sign = "{}\n{}".format(timestamp, self.secret)
+        string_to_sign_enc = string_to_sign.encode("utf-8")
+        hmac_code = hmac.new(
+            secret_enc, string_to_sign_enc, digestmod=hashlib.sha256
+        ).digest()
+        sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
 
-def get_dd():
-    while True:
-        dname = input('请输入正确的学习强国帐号(钉钉手机号)：')
-        ret = re.match(r"^1[3-9]\d{9}$", dname)
-        if ret:
-            pwd = input("请输入学习强国密码：")
-            break
-    return dname, pwd
+        # 完整的url
+        api_url = "https://oapi.dingtalk.com/robot/send?access_token={}&timestamp={}&sign={}".format(
+            self.token, timestamp, sign
+        )
+        print("钉钉机器人url: ", api_url)
+        return api_url
 
+    def ddmsgsend(self, msgurl):
+        import requests, json  # 导入依赖库
 
-def dd_login_status(uname, has_dd=False):
-    while True:
-        if has_dd:
-            dname, pwd = load_dingding("./user/{}/dingding".format(uname))
-            print("读取用户信息成功")
-        else:
-            dname, pwd = get_dd()
-        driver_login = mydriver.Mydriver(noimg=False)
-        login_status = driver_login.dd_login(dname, pwd)
-        if login_status:
-            save_dingding("./user/{}/dingding".format(uname), dname, pwd)
-            cookies = driver_login.get_cookies()
-            break
-    return cookies
+        headers = {"Content-Type": "application/json"}  # 定义数据类型
+        data = {
+            "msgtype": "link",
+            "link": {
+                "text": "学习强国",
+                "title": "学习吧少年",
+                "messageUrl": msgurl,
+            },
+        }
 
-
-def save_dingding(user_path, dname, pwd):
-    with open(user_path, "w", encoding="utf8") as fp:
-        fp.write(dname + "," + pwd)
-
-
-def load_dingding(user_path):
-    with open(user_path, "r", encoding="utf8") as fp:
-        try:
-            dname, pwd = fp.read().split(",")
-            return dname, pwd
-        except:
-            print("钉钉记录文件损坏，错误代码3程序退出")
-            sys.exit(3)
+        res = requests.post(self.get_url(), data=json.dumps(data), headers=headers)  # 发送post请求
+        print(res.text)

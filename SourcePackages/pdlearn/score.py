@@ -1,6 +1,27 @@
 import requests
 from requests.cookies import RequestsCookieJar
 import json
+from pdlearn.const import const
+
+
+# 总积分
+# https://pc-api.xuexi.cn/open/api/score/get?_t=1608769882241
+# 今日积分
+# https://pc-api.xuexi.cn/open/api/score/today/query
+
+
+def show_score(cookies):
+    userId, total, scores = get_score(cookies)
+    print("当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"]))
+    print("阅读文章:", scores["article_num"], "/", const.article_num_all, ",",
+        "观看视频:", scores["video_num"], "/", const.video_num_all, ",",
+        "文章时长:", scores["article_time"], "/", const.article_time_all, ",",
+        "视频时长:", scores["video_time"], "/", const.video_time_all, ",",
+        "\n每日登陆:", scores["login"], "/", const.login_all, ",",
+        "每日答题:", scores["daily"], "/", const.daily_all, ",",
+        "每周答题:", scores["weekly"], "/", const.weekly_all, ",",
+        "专项答题:", scores["zhuanxiang"], "/", const.zhuanxiang_all)
+    return total, scores
 
 
 def get_score(cookies):
@@ -8,26 +29,38 @@ def get_score(cookies):
         jar = RequestsCookieJar()
         for cookie in cookies:
             jar.set(cookie['name'], cookie['value'])
-        total = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
-                             headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
-        total = int(json.loads(total, encoding="utf8")["data"]["score"])
-        each1 = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
-                             headers={'Cache-Control': 'no-cache'}).content.decode(
-            "utf8")
-        each1 = json.loads(each1, encoding="utf8")["data"]["dayScoreDtos"]
-        each1 = [int(i["currentScore"]) for i in each1 if i["ruleId"] in [1, 2, 9, 1002, 1003, 6, 5, 4]]
-        each = [0, 0, 0, 0, 0, 0, 0, 0]
-        each[0] = each1[0]
-        each[1] = each1[1]
-        each[2] = each1[5]
-        each[3] = each1[6]
-        each[4] = each1[7]
-        each[5] = each1[4]
-        each[6] = each1[3]
-        each[7] = each1[2]
-        return total, each
+        total_json = requests.get("https://pc-api.xuexi.cn/open/api/score/get", cookies=jar,
+                                  headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
+        total = int(json.loads(total_json)["data"]["score"])
+        userId = json.loads(total_json)["data"]["userId"]
+        score_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
+                                  headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
+        today_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/query", cookies=jar,
+                                  headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
+        today = 0
+        today = int(json.loads(today_json)["data"]["score"])
+        dayScoreDtos = json.loads(score_json)["data"]["dayScoreDtos"]
+        rule_list = [1, 2, 9, 1002, 1003, 6, 5, 4]
+        score_list= [0, 0, 0, 0   , 0   , 0, 0, 0, 0, 0] # 长度为十
+        for i in dayScoreDtos:
+            for j in range(len(rule_list)):
+                if i["ruleId"] == rule_list[j]:
+                    score_list[j] = int(i["currentScore"])
+        # 阅读文章，视听学习，登录，文章时长，视听学习时长，每日答题，每周答题，专项答题
+        scores = {}
+        scores["article_num"]  = score_list[0] # 0阅读文章
+        scores["video_num"]    = score_list[1] # 1视听学习
+        scores["login"]        = score_list[2] # 7登录
+        scores["article_time"] = score_list[3] # 6文章时长
+        scores["video_time"]   = score_list[4] # 5视听学习时长
+        scores["daily"]        = score_list[5] # 2每日答题
+        scores["weekly"]       = score_list[6] # 3每周答题
+        scores["zhuanxiang"]   = score_list[7] # 4专项答题
+        
+        scores["today"]        = today         # 8今日得分
+        return userId ,total, scores
     except:
-        print("=" * 120)
-        print("get_video_links获取失败")
-        print("=" * 120)
+        print("=" * 60)
+        print("get_score 获取失败")
+        print("=" * 60)
         raise

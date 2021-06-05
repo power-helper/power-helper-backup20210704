@@ -4,7 +4,7 @@
 
 **下载地址：https://github.com/TechXueXi/TechXueXi/releases**
 
-（如使用源码，请使用主分支。请勿使用 dev 分支，该分支仅用于同步开发）
+（如使用源码，请使用主分支。请勿使用 dev 分支，该分支用于存放正在开发的代码，不保证稳定、可用，可能造成问题）
 
 > 本项目基于某已终止的项目，请自行搜索后前往star。我们由衷地敬佩这个领域的先锋们
 ![](https://raw.githubusercontent.com/TechXueXi/TechXueXi/master/img_folder/banner.jpg)
@@ -19,7 +19,7 @@
 
 本项目维护计划、路线图参见 https://github.com/TechXueXi/TechXueXi/projects/1
 
-如您参与贡献，请注意：维护计划、路线图中每一条未列至"Done"下时，仅可在 dev 分支改动。网站改版的修改可同时提交至dev和master。
+如您参与贡献，请注意：维护计划、路线图中每一条未列至"Done"下时，仅可在 dev 分支改动。
 
 ### [👨‍👨‍👦‍👦   直接参与贡献](https://github.com/TechXueXi/TechXueXi/blob/master/CONTRIBUTING.md)(内附提交方法)
 
@@ -141,6 +141,8 @@ TechXueXi为python学习交流的开源非营利项目，仅作为程序员之�
 
 ## 💾下载地址
 **非windows系统请暂时使用源码或虚拟机运行，各位若编译了二进制文件，可以邮件我们（推荐）或提交PR，谢谢————20200428**
+
+
 <!--
 [windows高速下载](https://github.com/TechXueXi/TechXueXi/releases)
 
@@ -223,6 +225,47 @@ win平台可能提示`无法定位程序输入点ucrtbase.terminate于动态链�
 ## 📝源码
 
 [![](https://img.shields.io/badge/source-pandalearning-orange.svg?style=for-the-badge&logo=visualstudiocode)](https://github.com/TechXueXi/TechXueXi/tree/master/SourcePackages) 
+
+简易说明，具体请谷歌必应百度
+
+安装 python 3
+
+### win源码使用说明
+
+1. 下载 ChromeDriver，chrome 并配置好
+
+2. 安装所需 python 模块
+
+```
+pip install -r requirements.txt
+```
+
+3. 执行文件
+
+```
+python ./pandalearning.py
+```
+
+
+### mac源码使用说明
+
+1. 安装ChromeDriver
+
+```
+brew install chromedriver
+```
+
+2. 安装所需 python 模块
+
+```
+pip install -r requirements.txt
+```
+
+3. 执行文件
+
+```
+python3 ./pandalearning.py
+```
 
 
 

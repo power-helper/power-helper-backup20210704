@@ -1,11 +1,15 @@
 from typing import List, Any
 
+import selenium
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 from selenium.webdriver.chrome.options import Options
 from pdlearn import user_agent
+from pdlearn import user
+from pdlearn.dingding import DingDingHandler
+from pdlearn.config import cfg
 from bs4 import BeautifulSoup
 import lxml
 import os
@@ -17,7 +21,7 @@ import re
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-
+from selenium.common import exceptions
 
 class title_of_login:
     def __call__(self, driver):
@@ -55,6 +59,10 @@ class Mydriver:
 
             self.options.add_argument('--user-agent={}'.format(user_agent.getheaders()))
             self.options.add_experimental_option('excludeSwitches', ['enable-automation'])  # 绕过js检测
+            # 在chrome79版本之后，上面的实验选项已经不能屏蔽webdriver特征了
+            # 屏蔽webdriver特征
+            self.options.add_argument("--disable-blink-features")
+            self.options.add_argument("--disable-blink-features=AutomationControlled")
             self.webdriver = webdriver
             if os.path.exists("./chrome/chromedriver.exe"):  # win
                 self.driver = self.webdriver.Chrome(executable_path="./chrome/chromedriver.exe",
@@ -69,14 +77,14 @@ class Mydriver:
                 self.driver = self.webdriver.Chrome(executable_path="/usr/local/bin/chromedriver",
                                                     chrome_options=self.options)
             else:
-                self.driver = self.webdriver.Chrome(chrome_options=self.options)
+                self.driver = self.webdriver.Chrome(executable_path="./chrome/chromedriver.exe",chrome_options=self.options)
         except:
-            print("=" * 120)
+            print("=" * 60)
             print("Mydriver初始化失败")
-            print("=" * 120)
+            print("=" * 60)
             raise
 
-    def login(self):
+    def get_cookie_from_network(self):
         print("正在打开二维码登陆界面,请稍后")
         self.driver.get("https://pc.xuexi.cn/points/login.html")
         try:
@@ -101,44 +109,74 @@ class Mydriver:
         else:
             self.driver.execute_script('arguments[0].remove()', remover)
             self.driver.execute_script('window.scrollTo(document.body.scrollWidth/2 - 200 , 0)')
+
+
+        try: 
+            # 取出iframe中二维码，并发往钉钉
+            if cfg["addition"]["SendLoginQRcode"] == "1":
+                print("二维码将发往钉钉机器人...\n" + "=" * 60)
+                self.toDingDing()
+        except KeyError as e:
+            print("未检测到SendLoginQRcode配置，请手动扫描二维码登陆...")
+
+
         try:
             # WebDriverWait(self.driver, 270).until(EC.title_is(u"我的学习"))
             WebDriverWait(self.driver, 270).until(title_of_login())
             cookies = self.get_cookies()
+            
+            user.save_cookies(cookies)
+            
             return cookies
-        except:
-            print("扫描二维码超时")
+        except Exception as e:
+            self.quit()
+            input("扫描二维码超时... 按回车键退出程序. 错误信息：" + str(e))
+            exit()
 
-    def dd_login(self, d_name, pwd):
-        __login_status = False
-        self.driver.get(
-            "https://login.dingtalk.com/login/index.htm?"
-            "goto=https%3A%2F%2Foapi.dingtalk.com%2Fconnect%2Foauth2%2Fsns_authorize"
-            "%3Fappid%3Ddingoankubyrfkttorhpou%26response_type%3Dcode%26scope%3Dsnsapi"
-            "_login%26redirect_uri%3Dhttps%3A%2F%2Fpc-api.xuexi.cn%2Fopen%2Fapi%2Fsns%2Fcallback"
-        )
-        self.driver.find_elements_by_id("mobilePlaceholder")[0].click()
-        self.driver.find_element_by_id("mobile").send_keys(d_name)
-        self.driver.find_elements_by_id("mobilePlaceholder")[1].click()
-        self.driver.find_element_by_id("pwd").send_keys(pwd)
-        self.driver.find_element_by_id("loginBtn").click()
+    def toDingDing(self):
+        token = cfg["addition"]["token"]
+        secret = cfg["addition"]["secret"]
+        ddhandler = DingDingHandler(token, secret)
+        ddhandler.ddmsgsend(self.getQRcode())
+
+    def getQRcode(self):
         try:
-            print("登陆中...")
-            WebDriverWait(self.driver, 2, 0.1).until(lambda driver: driver.find_element_by_class_name("modal"))
-            print(self.driver.find_element_by_class_name("modal").find_elements_by_tag_name("div")[0].text)
-            self.driver.quit()
-            __login_status = False
-        except:
-            __login_status = True
-        return __login_status
+            # 获取iframe内的二维码
+            self.driver.switch_to.frame(
+                WebDriverWait(self.driver, 30, 0.2).until(
+                lambda driver: driver.find_element_by_id("ddlogin-iframe"))
+            )
+            img = WebDriverWait(self.driver, 30, 0.2).until(
+                lambda driver: driver.find_element_by_tag_name("img")
+            )
+            path = img.get_attribute("src")
+            self.driver.switch_to.default_content()
+        except exceptions.TimeoutException:
+            print("当前网络缓慢...")
+        else:
+            return path
+
+    def login(self):
+        # 调用前要先尝试从cookie加载，失败再login
+        cookie_list = self.get_cookie_from_network()
+        return cookie_list
 
     def get_cookies(self):
         cookies = self.driver.get_cookies()
         return cookies
 
     def set_cookies(self, cookies):
-        for cookie in cookies:
-            self.driver.add_cookie({k: cookie[k] for k in cookie.keys()})
+        try:
+            # 解决Chrome 90版本无法运行的问题[https://github.com/TechXueXi/TechXueXi/issues/78]
+            for cookie in cookies:
+                if cookie['domain'] == 'pc.xuexi.cn':
+                    self.driver.get("https://pc.xuexi.cn/")
+                if cookie['domain'] == '.xuexi.cn':
+                    self.driver.get("https://www.xuexi.cn/")
+                # print(f'current cookie: {cookie}')
+                self.driver.add_cookie(cookie)
+        except exceptions.InvalidCookieDomainException as e:
+            print(e.__str__)
 
     def get_url(self, url):
         self.driver.get(url)
@@ -165,7 +203,7 @@ class Mydriver:
         return self.driver.find_element_by_xpath(xpath).text
 
     def check_delay(self):
-        delay_time = random.randint(2, 15)
+        delay_time = random.randint(2, 8)
         print('等待 ', delay_time, ' 秒')
         time.sleep(delay_time)
 
@@ -180,24 +218,22 @@ class Mydriver:
             print("有可点击的【查看提示】按钮")
         except Exception as e:
             print("没有可点击的【查看提示】按钮")
-            return ""
-        time.sleep(2)
+            return [],""
+        time.sleep(1)
         try:
             # tips_open = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[3]/span')
             tips_open = self.driver.find_element_by_xpath(
                 '//*[@id="app"]/div/div[*]/div/div[*]/div[*]/div[*]/span[contains(text(), "查看提示")]')
             tips_open.click()
         except Exception as e:
-            print("关闭查看提示失败！")
-            return ""
-        try:
-            html = self.driver.page_source
-            soup1 = BeautifulSoup(html, 'lxml')
-            content = soup1.find_all('font')  # tips.get_attribute("name") ,attrs={'color'}
-            answer: List[str] = []
-        except Exception as e:
-            print('page_source failed')
-            print(e)
+            print("关闭查看提示失败！没有可点击的【查看提示】按钮")
+            return [],""
+        tip_div = self.driver.find_element_by_css_selector(".ant-popover .line-feed")
+        tip_full_text = tip_div.get_attribute('innerHTML')
+        html = tip_full_text
+        soup1 = BeautifulSoup(html, 'lxml')
+        content = soup1.find_all('font')  # tips.get_attribute("name") ,attrs={'color'}
+        answer: List[str] = []
         try:
             for i in content:
                 answer.append(i.text)
@@ -209,18 +245,20 @@ class Mydriver:
                 '''
             print('获取提示：', answer)
         except Exception as e:
-            print('无法查看提示内容')
+            print('无法处理提示内容，请检查日志.')
             print(e)
-            return ""
-        time.sleep(2)
-
+            return [],""
+        time.sleep(1)
         try:
-            tips_close = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')
-            tips_close.click()
+            display_tip = 0 #页面上没有加载提示的内容
+            display_tip = self.driver.find_element_by_css_selector(".ant-popover-hidden") #关闭tip则为hidden
+            if(display_tip == 0): # 没有关闭tip
+                tips_close = self.driver.find_element_by_xpath('//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]')
+                tips_close.click()
         except Exception as e:
             print("没有可点击的【关闭提示】按钮")
-        time.sleep(2)
-        return answer
+        time.sleep(1)
+        return answer, tip_full_text
 
     def radio_get_options(self):
         html = self.driver.page_source
@@ -240,7 +278,8 @@ class Mydriver:
             except Exception as e:
                 print("点击", check_option, '失败！')
         self.check_delay()
-        submit = WebDriverWait(self.driver, 15).until(lambda driver: driver.find_element_by_class_name("action-row").find_elements_by_xpath("button"))
+        submit = WebDriverWait(self.driver, 15).until(
+            lambda driver: driver.find_element_by_class_name("action-row").find_elements_by_xpath("button"))
         if len(submit) > 1:
             self.click_xpath('//*[@id="app"]/div/div[2]/div/div[6]/div[2]/button[2]')
             print("成功点击交卷！")
