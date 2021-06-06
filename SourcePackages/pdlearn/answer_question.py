@@ -13,16 +13,17 @@ def check_delay():
 
 
 def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath ):
-    if scores[quiz_type] < score_all:
-        # driver_ans = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
+    quiz_zh_CN={"daily": "每日","weekly":"每周","zhuanxiang":"专项"}
+    if(quiz_type not in ["daily","weekly","zhuanxiang"]):
+        print("quiz_type 错误。收到的quiz_type："+quiz_type)
+        exit(0)
+    if scores[quiz_type] < score_all: # 还没有满分，需要答题
         driver_ans = Mydriver(nohead=False)
         driver_daily = driver_ans
         driver_weekly = driver_ans
         driver_zhuanxiang = driver_ans
         driver_ans.driver.maximize_window()
-        print('请保持窗口最大化')
-        print('请保持窗口最大化')
-        print('请保持窗口最大化')
+        print('请保持窗口最大化\n'*3)
         driver_ans.get_url("https://www.xuexi.cn/notFound.html")
         driver_ans.set_cookies(cookies)
         try_count = 0
@@ -205,6 +206,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                             else:
                                 print('无法根据提示判断，请自行答题……')
                                 log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+                                input("等待用户手动答题...完成后请在此按回车...")
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             radio_in_tips, radio_out_tips = "", ""
@@ -226,7 +228,8 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 driver_weekly.radio_check(radio_out_tips)
                             # return driver_weekly._search(content, options, excludes)
                             else:
-                                print('无法根据提示判断，准备搜索……')
+                                print('无法根据提示判断，请自行准备搜索……')
+                                input("等待用户手动答题...完成后请在此按回车...")
                         elif quiz_type == "zhuanxiang":
                             options = driver_zhuanxiang.radio_get_options()
                             radio_in_tips, radio_out_tips = "", ""
@@ -248,7 +251,8 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 driver_zhuanxiang.radio_check(radio_out_tips)
                             # return driver_zhuanxiang._search(content, options, excludes)
                             else:
-                                print('无法根据提示判断，准备搜索……')
+                                print('无法根据提示判断，请自行准备搜索……')
+                                input("等待用户手动答题...完成后请在此按回车...")
                     elif "单选题" in category:
                         if quiz_type == "daily":
                             options = driver_daily.radio_get_options()
@@ -288,6 +292,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 else:
                                     print('无法根据提示判断，请自行答题……')
                                     log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+                                    input("等待用户手动答题...完成后请在此按回车...")
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             if '因此本题选' in tips:
@@ -320,7 +325,8 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                     driver_weekly.radio_check(radio_out_tips)
                                 # return driver_weekly._search(content, options, excludes)
                                 else:
-                                    print('无法根据提示判断，准备搜索……')
+                                    print('无法根据提示判断，请自行准备搜索……')
+                                    input("等待用户手动答题...完成后请在此按回车...")
                         elif quiz_type == "zhuanxiang":
                             options = driver_zhuanxiang.radio_get_options()
                             if '因此本题选' in tips:
@@ -353,36 +359,27 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                     driver_zhuanxiang.radio_check(radio_out_tips)
                                 # return driver_zhuanxiang._search(content, options, excludes)
                                 else:
-                                    print('无法根据提示判断，准备搜索……')
+                                    print('无法根据提示判断，请自行准备搜索……')
+                                    input("等待用户手动答题...完成后请在此按回车...")
                     else:
                         print("题目类型非法")
                         if quiz_type == "daily":
                             log_daily("！！！！！有提示，但题目类型非法！！！！！")
                         break
                     time.sleep(1)
-            if quiz_type == "daily":
-                total, scores = show_score(cookies)
-                if scores["daily"] >= const.daily_all:
-                    print("检测到每日答题分数已满,退出学习")
-                else:
-                    print("！！！！！没拿到满分！！！！！")
-                    log_daily("！！！！！没拿到满分！！！！！")
-            elif quiz_type == "weekly":
-                total, scores = show_score(cookies)
-                if scores["weekly"] >= const.weekly_all:
-                    print("检测到每周答题分数已满,退出学习")
-                    driver_weekly.quit()
-            elif quiz_type == "zhuanxiang":
-                total, scores = show_score(cookies)
-                if scores["zhuanxiang"] >= const.zhuanxiang_all:
-                    print("检测到专项答题分数已满,退出学习")
-                    driver_zhuanxiang.quit()
+            total, scores = show_score(cookies)
+            if scores[quiz_type] >= score_all:
+                print("检测到"+quiz_zh_CN[quiz_type]+"答题分数已满,退出学习")
+            else:
+                print("！！！！！没拿到满分，请收集日志反馈错误题目！！！！！")
+                input("完成后（或懒得弄）请在此按回车...")
+                #log_daily("！！！！！没拿到满分！！！！！")
         try:
             driver_ans.quit()
         except Exception as e:
             print('driver_ans 在 answer_question 退出时出了一点小问题...')
     else:
-        print(quiz_type+"答题之前学完了")
+        print(quiz_zh_CN[quiz_type]+"答题已满分.")
 
 
 
