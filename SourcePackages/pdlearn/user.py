@@ -160,7 +160,7 @@ def list_user():
         print("检测到您有多用户：", end="")
         for i in mapping:
             print(color.blue(i + "_" + mapping[i]), end="; ")
-        print("")
+        print("(暂不支持切换用户)")
 
 # 多用户中选择一个用户，半成品
 def select_user():

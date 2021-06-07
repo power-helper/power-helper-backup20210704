@@ -37,7 +37,9 @@ def get_argv():
 
 if __name__ == '__main__':
     # 注：不要再pandalearning.py之外使用os.chdir(sys.path[0])，否则可能造成打包程序不能运行
-    os.chdir(sys.path[0]) # 切换pwd到python文件路径，避免找不到相对路径下的ini和相关文件
+    # 切换pwd到python文件路径，避免找不到相对路径下的ini和相关文件
+    base_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+    os.chdir(base_path)
     #  0 读取版本信息
     start_time = time.time()
     if(cfg['display']['banner'] != "false"): # banner文本直接硬编码，不要放在ini中
@@ -55,7 +57,13 @@ if __name__ == '__main__':
     # user.select_user()
     print("=" * 60, '''\nTechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
     print(cfg['base']['ModeText'] + '\n' + "=" * 60) # 模式提示文字请在 ./config/main.ini 处修改。
-    TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
+    
+    try:
+        if cfg["base"]["ModeType"]:
+            print("默认选择模式：" + cfg["base"]["ModeType"] + "\n" + "=" * 60)
+            TechXueXi_mode = cfg["base"]["ModeType"]
+    except Exception as e:
+        TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
 
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
     info_shread.start()
