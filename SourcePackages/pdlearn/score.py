@@ -35,6 +35,7 @@ def get_score(cookies):
         userId = json.loads(total_json)["data"]["userId"]
         score_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/queryrate", cookies=jar,
                                   headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
+        requests.adapters.DEFAULT_RETRIES = 5
         today_json = requests.get("https://pc-api.xuexi.cn/open/api/score/today/query", cookies=jar,
                                   headers={'Cache-Control': 'no-cache'}).content.decode("utf8")
         today = 0
