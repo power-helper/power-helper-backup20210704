@@ -136,9 +136,9 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                         print(ans_results[0].text)
                         print(ans_results[2].get_attribute("innerHTML"))
                         print(ans_results[2].text)
-                        input("wait...")
-                        exit(2)
-                        break;
+                        time.sleep(3)
+                        # exit(2)
+                        return
                     log_daily("\n====================")
                     log_daily(log_timestamp())
                     log_daily("【"+category+"】")
@@ -156,7 +156,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                     print("本题没有提示")
                     if quiz_type == "daily":
                         log_daily("！！！！！本题没有找到提示，暂时略过！！！！！")
-                        sleep(3)
+                        time.sleep(3)
                     if "填空题" in category:
                         print('没有找到提示，暂时略过')
                         continue
