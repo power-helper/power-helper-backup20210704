@@ -18,7 +18,7 @@ def up_info():
         print(color.yellow("[*] 最新版本为：{}".format(update_log[1].split("=")[1])))
         if __Version != update_log[1].split("=")[1]:
             print(color.red("[*] 当前不是最新版本，建议更新"))
-            print(color.red("[*] =" * 60))
+            print(color.red("[*] "+"=" * 60))
             print(color.red("[*] 更新提要："))
             for i in update_log[2:]:
                 print(color.red("[*] " + i))

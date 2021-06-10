@@ -3,10 +3,13 @@ import re
 import time
 import pickle
 import base64
+import requests
+from requests.cookies import RequestsCookieJar
 from sys import argv
 from pdlearn import score
 from pdlearn import file
 from pdlearn import color
+from pdlearn.mydriver        import Mydriver
 
 def get_userId(cookies):
     userId, total, scores = score.get_score(cookies)
@@ -73,8 +76,8 @@ def get_cookie(userId):
             cookie_list = pickle.loads(cookies_bytes)
             for d in cookie_list: # 检查是否过期
                 if 'name' in d and 'value' in d and 'expiry' in d:
-                    expiry_date = int(d['expiry'])
-                    if expiry_date > (int)(time.time()):
+                    expiry_timestamp = int(d['expiry'])
+                    if expiry_timestamp > (int)(time.time()):
                         pass
                     else:
                         return []
@@ -150,42 +153,93 @@ def check_default_user_cookie():
         print(color.green("（cookie信息有效）"))
         return cookies
 
+# 保活。执行会花费一定时间，全新cookies的有效时间是12h
+def refresh_all_cookies(live_time=8.0):  # cookie有效时间保持在live_time以上
+    template_json_str = '''{}'''
+    cookies_json_obj = file.get_json_data("user/cookies.json", template_json_str)
+    need_check = False
+    valid_cookies = []
+    for i in cookies_json_obj:
+            cookies_b64 = cookies_json_obj[i]
+            cookies_bytes = base64.b64decode(cookies_b64)
+            cookie_list = pickle.loads(cookies_bytes)
+            for d in cookie_list:  # 检查是否过期
+                if 'name' in d and 'value' in d and 'expiry' in d and d["name"]=="token":
+                    remain_time = (int(d['expiry']) - (int)(time.time()))/3600
+                    print(color.green(i+"_"+get_nickname(i)+"，剩余有效时间："+str(int(remain_time*1000)/1000)+" 小时."), end="")
+                    if remain_time < 0:
+                        print(color.red(" 已过期 需要重新登陆"))
+                    else:
+                        # print(color.blue(" 有效"), end="")
+                        valid_cookies.append(cookie_list)
+                        if remain_time <= live_time:  # 全新cookies的有效时间是12h
+                            print(color.red(" 需要刷新"))
+                            need_check = True
+                            # 暂没有证据表明可以用requests来请求，requests请求的响应不带cookies，不确定会不会更新cookies时间
+                            # （但是万一服务端自动更新了cookie，可以试试12h之后再访问呢？则剩余时间直接设为12即可。有空的伙计可以做个实验）
+                            # jar = RequestsCookieJar()
+                            # for cookie in cookie_list:
+                            #     jar.set(cookie['name'], cookie['value'])
+                            # new_cookies = requests.get("https://pc.xuexi.cn/points/my-points.html", cookies=jar,
+                            #                         headers={'Cache-Control': 'no-cache'}).cookies.get_dict()
+                            # 浏览器登陆方式更新cookie，速度较慢但可靠
+                            driver_login = Mydriver(nohead=False)
+                            driver_login.get_url("https://www.xuexi.cn/notFound.html")
+                            driver_login.set_cookies(cookie_list)
+                            driver_login.get_url('https://pc.xuexi.cn/points/my-points.html')
+                            new_cookies = driver_login.get_cookies()
+                            driver_login.quit()
+                            save_cookies(new_cookies)
+                        else:
+                            print(color.green(" 无需刷新"))
+    if need_check:  # 再执行一遍来检查有效情况
+        print("再次检查cookies有效时间...")
+        refresh_all_cookies()
+    else:
+        for cookie in valid_cookies:
+            user_id = get_userId(cookie)
+            print(color.blue(get_fullname(user_id))+" 的今日得分：")
+            score.show_score(cookie)
+
 
 # 如有多用户，打印各个用户信息
-def list_user():
+def list_user(printing=True):
     status = get_user_status()
     mapping = status['userId_mapping']
     map_count = len(mapping)
-    if(map_count > 2):
-        print("检测到您有多用户：", end="")
-        for i in mapping:
-            print(color.blue(i + "_" + mapping[i]), end="; ")
-        print("(暂不支持切换用户)")
+    all_users = []
+    for i in mapping:
+        if i == "0":
+            continue
+        else:
+            all_users.append([i, mapping[i]])
+    if printing:
+        if(map_count > 2):
+            print("检测到您有多用户：", end="")
+            for i in mapping:
+                print(color.blue(i + "_" + mapping[i]), end="; ")
+            print("")
+    return all_users
 
 # 多用户中选择一个用户，半成品
 def select_user():
-    status = get_user_status()
-    mapping = status['userId_mapping']
-    map_keys = []
-    map_values = []
-    map_count = len(mapping)
-    for i in mapping:
-        map_keys.append(i)
-        map_values.append(mapping[i])
+    user_list = list_user(printing=False)
+    user_count = len(user_list)
     print("=" * 60)
-    if(map_count > 2):
+    if user_count > 1:
         print("检测到多用户：")
-        for i in range(map_count):
-            print(i, " ", map_keys[i], " ", map_values[i])
-        No = int(input("请选择用户序号："))
-        if(No < 0 or No >= map_count):
+        for i in range(user_count):
+            print(i, " ", user_list[i][0], " ", user_list[i][1])
+        num = int(input("请选择用户序号："))
+        if num < 0 or num >= user_count:
             print("输入的范围不对。")
             exit()
         else:
-            userId = map_keys[No]
-            fullname = get_fullname(userId)
+            user_id = user_list[num][0]
+            print("默认用户已切换为："+color.blue(get_fullname(user_id)))
+            update_last_user(user_id)
     else:
-        print("单用户。用户名：", get_default_userId(), "，昵称：", get_default_nickname())
+        print("目前你只有一个用户。用户名：", get_default_userId(), "，昵称：", get_default_nickname())
 
 
 # 仅适用于Windows的关机，有待改进
