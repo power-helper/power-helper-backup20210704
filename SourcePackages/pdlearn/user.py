@@ -154,7 +154,7 @@ def check_default_user_cookie():
         return cookies
 
 # 保活。执行会花费一定时间，全新cookies的有效时间是12h
-def refresh_all_cookies(live_time=8.0):  # cookie有效时间保持在live_time以上
+def refresh_all_cookies(live_time=8.0, display_score=False):  # cookie有效时间保持在live_time以上
     template_json_str = '''{}'''
     cookies_json_obj = file.get_json_data("user/cookies.json", template_json_str)
     need_check = False
@@ -166,7 +166,7 @@ def refresh_all_cookies(live_time=8.0):  # cookie有效时间保持在live_time�
             for d in cookie_list:  # 检查是否过期
                 if 'name' in d and 'value' in d and 'expiry' in d and d["name"]=="token":
                     remain_time = (int(d['expiry']) - (int)(time.time()))/3600
-                    print(color.green(i+"_"+get_nickname(i)+"，剩余有效时间："+str(int(remain_time*1000)/1000)+" 小时."), end="")
+                    print(color.green(i+"_"+get_nickname(i)+"，登录剩余有效时间："+str(int(remain_time*1000)/1000)+" 小时."), end="")
                     if remain_time < 0:
                         print(color.red(" 已过期 需要重新登陆"))
                     else:
@@ -195,7 +195,7 @@ def refresh_all_cookies(live_time=8.0):  # cookie有效时间保持在live_time�
     if need_check:  # 再执行一遍来检查有效情况
         print("再次检查cookies有效时间...")
         refresh_all_cookies()
-    else:
+    elif display_score:
         for cookie in valid_cookies:
             user_id = get_userId(cookie)
             print(color.blue(get_fullname(user_id))+" 的今日得分：")

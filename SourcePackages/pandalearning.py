@@ -102,7 +102,12 @@ if __name__ == '__main__':
         zhuanxiang(cookies, scores)
     if TechXueXi_mode == "4":
         user.select_user()
+    if TechXueXi_mode == "5":
+        user.refresh_all_cookies(display_score=True)
 
     seconds_used = int(time.time() - start_time)
     print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
-    user.shutdown(stime)
+    try:
+        user.shutdown(stime)
+    except Exception as e:
+        pass
