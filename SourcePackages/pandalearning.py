@@ -104,6 +104,8 @@ if __name__ == '__main__':
         user.select_user()
     if TechXueXi_mode == "5":
         user.refresh_all_cookies(display_score=True)
+    if TechXueXi_mode == "6":
+        user.refresh_all_cookies(live_time=12.0)
 
     seconds_used = int(time.time() - start_time)
     print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
