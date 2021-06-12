@@ -111,7 +111,7 @@ class Mydriver:
             self.driver.execute_script('window.scrollTo(document.body.scrollWidth/2 - 200 , 0)')
 
 
-        try: 
+        try:
             # 取出iframe中二维码，并发往钉钉
             if cfg["addition"]["SendLoginQRcode"] == "1":
                 print("二维码将发往钉钉机器人...\n" + "=" * 60)
@@ -124,9 +124,9 @@ class Mydriver:
             # WebDriverWait(self.driver, 270).until(EC.title_is(u"我的学习"))
             WebDriverWait(self.driver, 270).until(title_of_login())
             cookies = self.get_cookies()
-            
+
             user.save_cookies(cookies)
-            
+
             return cookies
         except Exception as e:
             self.quit()
@@ -174,6 +174,9 @@ class Mydriver:
                 if cookie['domain'] == '.xuexi.cn':
                     self.driver.get("https://www.xuexi.cn/")
                 # print(f'current cookie: {cookie}')
+                # for expiry error (maybe old version compatibility)
+                if 'expiry' in cookie:
+                    cookie['expiry'] = int(cookie['expiry'])
                 self.driver.add_cookie(cookie)
         except exceptions.InvalidCookieDomainException as e:
             print(e.__str__)
