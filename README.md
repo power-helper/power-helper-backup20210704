@@ -16,6 +16,7 @@
 * 创建本地config目录（可以复制SourcePackages下config目录）
 * 修改config/main.ini文件
     * 取消SendLoginQRcode、token、secret注释，并替换token与secret
+    * 取消注释ModeType=3
 
 
 使用方法：
