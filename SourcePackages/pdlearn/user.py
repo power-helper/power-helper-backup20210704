@@ -24,7 +24,7 @@ def get_fullname(userId):
         print("查找 userId: " + str(userId) + " 失败...")
         pattern = re.compile(u'^[a-zA-Z0-9_\u4e00-\u9fa5]+$')
         while True:
-            input_name = input("将为此 userId 添加一个新用户。请输入此用户昵称：")
+            input_name = 'user1'  # input("将为此 userId 添加一个新用户。请输入此用户昵称：")
             if(pattern.search(input_name) != None):
                 break
             else:

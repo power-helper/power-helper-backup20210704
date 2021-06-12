@@ -1,3 +1,38 @@
+## headless version for docker
+###  修改内容
+* 使用headless driver（运行在无图形化的docker或服务器上）
+* 使用单线程学习
+* 调整部分input等不适应后台运行的方法
+* 少量指定版本driver兼容性处理
+* 必须使用钉钉机器人（以便于后台运行登录）
+* 增加完成学习后钉钉机器人消息通知
+
+![](https://raw.githubusercontent.com/wx5223/TechXueXi/headless-single-docker/img_folder/dingding.jpg)
+
+提前准备
+* 打开钉钉-建群或讨论组，踢掉好友（仅保留自己）
+* 创建自定义机器人
+* 获取token(Webhook地址中token)与secret(加签)
+* 创建本地config目录（可以复制SourcePackages下config目录）
+* 修改config/main.ini文件
+    * 取消SendLoginQRcode、token、secret注释，并替换token与secret
+
+
+使用方法：
+```
+# 步骤1 创建容器（首次运行，仅运行一次，除非删除容器）
+docker run -d --name xuexi -v 替换为本地config目录:/xuexi/config wx5223/xuexi:v20210605_headless python pandalearning.py
+# 启动容器（每天运行）
+docker start xuexi
+```
+问题排查：
+```
+# 日志查看（仅用于排查问题）
+docker logs xuexi
+# 删除容器（可以重新执行步骤1 创建容器）
+docker rm xuexi
+```
+---
 **[在线聊天室地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
 
 **支持每日答题，支持每周答题，支持专项答题**

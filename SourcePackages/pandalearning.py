@@ -10,7 +10,7 @@ from pdlearn import color
 from pdlearn import threads
 from pdlearn.config          import cfg
 from pdlearn.mydriver        import Mydriver
-from pdlearn.score           import show_score
+from pdlearn.score           import show_score, get_score_output
 from pdlearn.article_video   import article, video
 from pdlearn.answer_question import daily, weekly, zhuanxiang
 from pdlearn.dingding import DingDingHandler
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     seconds_used = int(time.time() - start_time)
     print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
     output = get_score_output(cookies)
-    output += "/n总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒"
+    output += "\n总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒"
     ddoutput(output)
 
     user.shutdown(stime)
