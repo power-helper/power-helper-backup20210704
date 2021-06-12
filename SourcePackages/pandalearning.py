@@ -10,9 +10,17 @@ from pdlearn import color
 from pdlearn import threads
 from pdlearn.config          import cfg
 from pdlearn.mydriver        import Mydriver
-from pdlearn.score           import show_score
+from pdlearn.score           import show_score, get_score_output
 from pdlearn.article_video   import article, video
 from pdlearn.answer_question import daily, weekly, zhuanxiang
+from pdlearn.dingding import DingDingHandler
+
+
+def ddoutput(output):
+    token = cfg["addition"]["token"]
+    secret = cfg["addition"]["secret"]
+    ddhandler = DingDingHandler(token, secret)
+    ddhandler.ddtextsend(output)
 
 
 def get_argv():
@@ -57,7 +65,7 @@ if __name__ == '__main__':
     # user.select_user()
     print("=" * 60, '''\nTechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
     print(cfg['base']['ModeText'] + '\n' + "=" * 60) # 模式提示文字请在 ./config/main.ini 处修改。
-    
+
     try:
         if cfg["base"]["ModeType"]:
             print("默认选择模式：" + cfg["base"]["ModeType"] + "\n" + "=" * 60)
@@ -71,7 +79,7 @@ if __name__ == '__main__':
     uid = user.get_default_userId()
     if not cookies:
         print("未找到有效登录信息，需要登录")
-        driver_login = Mydriver(nohead=False)
+        driver_login = Mydriver(nohead=True)
         cookies = driver_login.login()
         driver_login.quit()
         user.save_cookies(cookies)
@@ -80,12 +88,12 @@ if __name__ == '__main__':
         user.update_last_user(uid)
     article_index = user.get_article_index(uid)
     video_index = user.get_video_index(uid)
-    
+
     total, scores = show_score(cookies)
     nohead, lock, stime = get_argv()
 
-    article_thread = threads.MyThread("文章学习", article, uid, cookies, article_index, scores, lock=lock)
-    video_thread = threads.MyThread("视频学习", video, uid, cookies, video_index, scores, lock=lock)
+    article_thread = threads.MyMainThread("文章学习", article, uid, cookies, article_index, scores, lock=lock)
+    video_thread = threads.MyMainThread("视频学习", video, uid, cookies, video_index, scores, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
@@ -102,4 +110,8 @@ if __name__ == '__main__':
 
     seconds_used = int(time.time() - start_time)
     print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
+    output = get_score_output(cookies)
+    output += "\n总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒"
+    ddoutput(output)
+
     user.shutdown(stime)

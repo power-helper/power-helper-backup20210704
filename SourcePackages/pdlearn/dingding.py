@@ -40,3 +40,17 @@ class DingDingHandler:
 
         res = requests.post(self.get_url(), data=json.dumps(data), headers=headers)  # 发送post请求
         print(res.text)
+
+    def ddtextsend(self, text):
+        import requests, json  # 导入依赖库
+
+        headers = {"Content-Type": "application/json"}  # 定义数据类型
+        data = {
+            "msgtype": "text",
+            "text": {
+                "content": text,
+            },
+        }
+
+        res = requests.post(self.get_url(), data=json.dumps(data), headers=headers)  # 发送post请求
+        print(res.text)

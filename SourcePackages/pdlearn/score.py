@@ -24,6 +24,20 @@ def show_score(cookies):
     return total, scores
 
 
+def get_score_output(cookies):
+    userId, total, scores = get_score(cookies)
+    output = "当前学习总积分：" + str(total) + "\t" + "今日得分：" + str(scores["today"])
+    output += "\n阅读文章:" + str(scores["article_num"]) + "/" + str(const.article_num_all) + \
+              "\n观看视频:" + str(scores["video_num"]) + "/" + str(const.video_num_all) + \
+              "\n文章时长:" + str(scores["article_time"]) + "/" + str(const.article_time_all) + \
+              "\n视频时长:" + str(scores["video_time"]) + "/" + str(const.video_time_all) + \
+              "\n每日登陆:" + str(scores["login"]) + "/" + str(const.login_all) + \
+              "\n每日答题:" + str(scores["daily"]) + "/" + str(const.daily_all) + \
+              "\n每周答题:" + str(scores["weekly"]) + "/" + str(const.weekly_all) + \
+              "\n专项答题:" + str(scores["zhuanxiang"]) + "/" + str(const.zhuanxiang_all)
+    return output
+
+
 def get_score(cookies):
     try:
         jar = RequestsCookieJar()
@@ -56,7 +70,7 @@ def get_score(cookies):
         scores["daily"]        = score_list[5] # 2每日答题
         scores["weekly"]       = score_list[6] # 3每周答题
         scores["zhuanxiang"]   = score_list[7] # 4专项答题
-        
+
         scores["today"]        = today         # 8今日得分
         return userId ,total, scores
     except:
