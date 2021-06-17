@@ -7,22 +7,27 @@
 * 必须使用钉钉机器人（以便于后台运行登录）
 * 增加完成学习后钉钉机器人消息通知
 
-![](https://raw.githubusercontent.com/wx5223/TechXueXi/headless-single-docker/img_folder/dingding.jpg)
+### 20210616更新内容
+* 解决钉钉二维码图片不显示的问题，补充输出二维码图片识别url。
+    * based on https://github.com/TechXueXi/TechXueXi/issues/108 (thanks to mudapi)
+* 加入登录自动超时重试（重试2次）
+* 加入超时退出（针对部分答题问题导致程序挂起）
+* 去除docker容器配置文件，简化使用（现在只需要一条命令即可）
+
+
+![](https://raw.githubusercontent.com/wx5223/TechXueXi/headless-single-docker/img_folder/dingding2.jpg)
 
 提前准备
 * 打开钉钉-建群或讨论组，踢掉好友（仅保留自己）
 * 创建自定义机器人
 * 获取token(Webhook地址中token)与secret(加签)
-* 创建本地config目录（可以复制SourcePackages下config目录）
-* 修改config/main.ini文件
-    * 取消SendLoginQRcode、token、secret注释，并替换token与secret
-    * 取消注释ModeType=3
 
 
 使用方法：
 ```
-# 步骤1 创建容器（首次运行，仅运行一次，除非删除容器）
-docker run -d --name xuexi -v 替换为本地config目录:/xuexi/config wx5223/xuexi:v20210605_headless python pandalearning.py
+# 步骤1 创建并运行容器（首次运行，仅运行一次，除非删除容器）
+docker run -d --name xuexi wx5223/xuexi:v20210616_headless python pandalearning.py 替换为自己的token 替换为自己的secret
+
 # 启动容器（每天运行）
 docker start xuexi
 ```

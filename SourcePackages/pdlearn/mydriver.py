@@ -36,7 +36,8 @@ class title_of_login:
 
 class Mydriver:
 
-    def __init__(self, noimg=True, nohead=True):
+    def __init__(self, noimg=True, nohead=True, ddhandler=None):
+        self.ddhandler = ddhandler
         try:
             self.options = Options()
             if os.path.exists("./chrome/chrome.exe"):  # win
@@ -84,7 +85,7 @@ class Mydriver:
             print("=" * 60)
             raise
 
-    def get_cookie_from_network(self):
+    def get_cookie_from_network(self, retry=0):
         print("正在打开二维码登陆界面,请稍后")
         self.driver.get("https://pc.xuexi.cn/points/login.html")
         try:
@@ -113,9 +114,9 @@ class Mydriver:
 
         try:
             # 取出iframe中二维码，并发往钉钉
-            if cfg["addition"]["SendLoginQRcode"] == "1":
+            if 1:  # cfg["addition"]["SendLoginQRcode"] == "1":
                 print("二维码将发往钉钉机器人...\n" + "=" * 60)
-                self.toDingDing()
+                self.get_dingding_handler().ddimgsend(self.getQRcode(), retry=retry)
         except KeyError as e:
             print("未检测到SendLoginQRcode配置，请手动扫描二维码登陆...")
 
@@ -129,15 +130,23 @@ class Mydriver:
 
             return cookies
         except Exception as e:
-            self.quit()
-            input("扫描二维码超时... 按回车键退出程序. 错误信息：" + str(e))
-            exit()
+            if retry > 1:
+                self.quit()
+                # input("扫描二维码超时... 按回车键退出程序. 错误信息：" + str(e))
+                self.dingding_text_send("扫描二维码/登录超时，程序结束")
+                exit()
+            else:
+                return self.get_cookie_from_network(retry=retry+1)
 
-    def toDingDing(self):
-        token = cfg["addition"]["token"]
-        secret = cfg["addition"]["secret"]
-        ddhandler = DingDingHandler(token, secret)
-        ddhandler.ddmsgsend(self.getQRcode())
+    def get_dingding_handler(self):
+        if self.ddhandler is None:
+            token = cfg["addition"]["token"]
+            secret = cfg["addition"]["secret"]
+            self.ddhandler = DingDingHandler(token, secret)
+        return self.ddhandler
+
+    def dingding_text_send(self, msg):
+        self.get_dingding_handler().ddtextsend(msg)
 
     def getQRcode(self):
         try:

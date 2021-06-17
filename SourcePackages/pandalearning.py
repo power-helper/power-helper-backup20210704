@@ -14,33 +14,27 @@ from pdlearn.score           import show_score, get_score_output
 from pdlearn.article_video   import article, video
 from pdlearn.answer_question import daily, weekly, zhuanxiang
 from pdlearn.dingding import DingDingHandler
-
-
-def ddoutput(output):
-    token = cfg["addition"]["token"]
-    secret = cfg["addition"]["secret"]
-    ddhandler = DingDingHandler(token, secret)
-    ddhandler.ddtextsend(output)
+from pdlearn.timeout import timeout, TimeoutError
 
 
 def get_argv():
-    nohead = True
-    lock = False
-    stime = False
-    if len(argv) > 2:
-        if argv[2] == "hidden":
-            nohead = True
-        elif argv[2] == "show":
-            nohead = False
-    if len(argv) > 3:
-        if argv[3] == "single":
-            lock = True
-        elif argv[3] == "multithread":
-            lock = False
-    if len(argv) > 4:
-        if argv[4].isdigit():
-            stime = argv[4]
-    return nohead, lock, stime
+    assert len(argv) == 3, '参数错误，例：python pandalearning.py 替换为自己的token 替换为自己的secret'
+    token = argv[1]
+    secret = argv[2]
+    return token, secret
+
+
+@timeout(1800, 'timeout')
+def answer_question(cookies, scores):
+    TechXueXi_mode = "3"
+    if TechXueXi_mode in ["2", "3"]:
+        print('开始每日答题……')
+        daily(cookies, scores)
+    if TechXueXi_mode in ["3"]:
+        print('开始每周答题……')
+        weekly(cookies, scores)
+        print('开始专项答题……')
+        zhuanxiang(cookies, scores)
 
 
 if __name__ == '__main__':
@@ -63,23 +57,24 @@ if __name__ == '__main__':
     cookies = user.check_default_user_cookie()
     user.list_user()
     # user.select_user()
-    print("=" * 60, '''\nTechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
-    print(cfg['base']['ModeText'] + '\n' + "=" * 60) # 模式提示文字请在 ./config/main.ini 处修改。
-
-    try:
-        if cfg["base"]["ModeType"]:
-            print("默认选择模式：" + cfg["base"]["ModeType"] + "\n" + "=" * 60)
-            TechXueXi_mode = cfg["base"]["ModeType"]
-    except Exception as e:
-        TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
-
+    # print("=" * 60, '''\nTechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
+    # print(cfg['base']['ModeText'] + '\n' + "=" * 60) # 模式提示文字请在 ./config/main.ini 处修改。
+    #
+    # try:
+    #     if cfg["base"]["ModeType"]:
+    #         print("默认选择模式：" + cfg["base"]["ModeType"] + "\n" + "=" * 60)
+    #         TechXueXi_mode = cfg["base"]["ModeType"]
+    # except Exception as e:
+    #     TechXueXi_mode = input("请选择模式（输入对应数字）并回车： ")
+    token, secret = get_argv()
+    ddhandler = DingDingHandler(token, secret)
     info_shread = threads.MyThread("获取更新信息...", version.up_info)
     info_shread.start()
     #  1 创建用户标记，区分多个用户历史纪录
     uid = user.get_default_userId()
     if not cookies:
         print("未找到有效登录信息，需要登录")
-        driver_login = Mydriver(nohead=True)
+        driver_login = Mydriver(nohead=True, ddhandler=ddhandler)
         cookies = driver_login.login()
         driver_login.quit()
         user.save_cookies(cookies)
@@ -90,28 +85,24 @@ if __name__ == '__main__':
     video_index = user.get_video_index(uid)
 
     total, scores = show_score(cookies)
-    nohead, lock, stime = get_argv()
 
+    lock = False
     article_thread = threads.MyMainThread("文章学习", article, uid, cookies, article_index, scores, lock=lock)
     video_thread = threads.MyMainThread("视频学习", video, uid, cookies, video_index, scores, lock=lock)
     article_thread.start()
     video_thread.start()
     article_thread.join()
     video_thread.join()
-
-    if TechXueXi_mode in ["2", "3"]:
-        print('开始每日答题……')
-        daily(cookies, scores)
-    if TechXueXi_mode in ["3"]:
-        print('开始每周答题……')
-        weekly(cookies, scores)
-        print('开始专项答题……')
-        zhuanxiang(cookies, scores)
+    try:
+        answer_question(cookies, scores)
+    except TimeoutError:
+        print('答题超时退出')
 
     seconds_used = int(time.time() - start_time)
     print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
     output = get_score_output(cookies)
     output += "\n总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒"
-    ddoutput(output)
+    ddhandler.ddtextsend(output)
 
+    stime = 0
     user.shutdown(stime)
