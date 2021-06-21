@@ -105,6 +105,13 @@ def save_cookies(cookies):
     file.save_json_data("user/cookies.json", cookies_json_obj)
 
 
+def remove_cookie(uid):
+    template_json_str = '''{}'''
+    cookies_json_obj = file.get_json_data("user/cookies.json", template_json_str)
+    cookies_json_obj.pop(str(uid))
+    file.save_json_data("user/cookies.json", cookies_json_obj)
+
+
 def get_article_video_json():
     template_json_str = '''{"#此文件记录用户的视频和文章的浏览进度":"","article_index":{},"video_index":{}}'''
     article_video_json = file.get_json_data("user/article_video_index.json", template_json_str)
@@ -180,15 +187,15 @@ def refresh_all_cookies(live_time=8.0, display_score=False):  # cookie有效时�
     cookies_json_obj = file.get_json_data("user/cookies.json", template_json_str)
     need_check = False
     valid_cookies = []
-    for i in cookies_json_obj:
-        cookies_b64 = cookies_json_obj[i]
+    for uid in cookies_json_obj:
+        cookies_b64 = cookies_json_obj[uid]
         cookies_bytes = base64.b64decode(cookies_b64)
         cookie_list = pickle.loads(cookies_bytes)
         for d in cookie_list:  # 检查是否过期
             if 'name' in d and 'value' in d and 'expiry' in d and d["name"] == "token":
                 remain_time = (int(d['expiry']) - (int)(time.time())) / 3600
                 print(color.green(
-                    i + "_" + get_nickname(i) + "，登录剩余有效时间：" + str(int(remain_time * 1000) / 1000) + " 小时."), end="")
+                    uid + "_" + get_nickname(uid) + "，登录剩余有效时间：" + str(int(remain_time * 1000) / 1000) + " 小时."), end="")
                 if remain_time < 0:
                     print(color.red(" 已过期 需要重新登陆"))
                 else:
@@ -211,7 +218,14 @@ def refresh_all_cookies(live_time=8.0, display_score=False):  # cookie有效时�
                         driver_login.get_url('https://pc.xuexi.cn/points/my-points.html')
                         new_cookies = driver_login.get_cookies()
                         driver_login.quit()
-                        save_cookies(new_cookies)
+                        found_token = False
+                        for j in new_cookies:  # 检查token
+                            if 'name' in j and j["name"] == "token":
+                                found_token = True
+                        if not found_token:
+                            remove_cookie(uid)  # cookie不含token则无效，删除cookie
+                        else:
+                            save_cookies(new_cookies)
                     else:
                         print(color.green(" 无需刷新"))
     if need_check:  # 再执行一遍来检查有效情况
