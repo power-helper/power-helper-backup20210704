@@ -12,13 +12,16 @@ def check_delay():
     time.sleep(delay_time)
 
 
-def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath ):
+def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=None):
     quiz_zh_CN={"daily": "每日","weekly":"每周","zhuanxiang":"专项"}
     if(quiz_type not in ["daily","weekly","zhuanxiang"]):
         print("quiz_type 错误。收到的quiz_type："+quiz_type)
         exit(0)
     if scores[quiz_type] < score_all: # 还没有满分，需要答题
-        driver_ans = Mydriver(nohead=False)
+        if driver_default == None:
+            driver_ans = Mydriver(nohead=False)
+        else:
+            driver_ans = driver_default
         driver_daily = driver_ans
         driver_weekly = driver_ans
         driver_zhuanxiang = driver_ans
@@ -138,7 +141,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                         print(ans_results[2].text)
                         time.sleep(3)
                         # exit(2)
-                        return
+                        break
                     log_daily("\n====================")
                     log_daily(log_timestamp())
                     log_daily("【"+category+"】")
@@ -156,6 +159,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                     print("本题没有提示")
                     if quiz_type == "daily":
                         log_daily("！！！！！本题没有找到提示，暂时略过！！！！！")
+                        input("等待用户手动答题...完成后请在此按回车...")
                         time.sleep(3)
                     if "填空题" in category:
                         print('没有找到提示，暂时略过')
@@ -374,36 +378,39 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                 print("！！！！！没拿到满分，请收集日志反馈错误题目！！！！！")
                 input("完成后（或懒得弄）请在此按回车...")
                 #log_daily("！！！！！没拿到满分！！！！！")
-        try:
-            driver_ans.quit()
-        except Exception as e:
-            print('driver_ans 在 answer_question 退出时出了一点小问题...')
+        if driver_default == None:
+            try:
+                driver_ans.quit()
+            except Exception as e:
+                print('driver_ans 在 answer_question 退出时出了一点小问题...')
+        else:
+            pass #其他函数传入函数的driver，不自动退出
     else:
         print(quiz_zh_CN[quiz_type]+"答题已满分.")
 
 
 
-def daily(cookies, scores):
+def daily(cookies, scores, driver_default=None):
     quiz_type = "daily"
     score_all = const.daily_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]'
-    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath)
+    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 
-def weekly(cookies, scores):
+def weekly(cookies, scores, driver_default=None):
     quiz_type = "weekly"
     score_all = const.weekly_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]'
-    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath)
+    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 
-def zhuanxiang(cookies, scores):
+def zhuanxiang(cookies, scores, driver_default=None):
     quiz_type = "zhuanxiang"
     score_all = const.zhuanxiang_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[7]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[1]'
-    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath)
+    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 

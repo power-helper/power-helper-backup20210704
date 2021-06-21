@@ -91,21 +91,25 @@ if __name__ == '__main__':
         video_thread.start()
         article_thread.join()
         video_thread.join()
-
+    driver_default = Mydriver(nohead=False)
     if TechXueXi_mode in ["2", "3"]:
         print('开始每日答题……')
-        daily(cookies, scores)
+        daily(cookies, scores, driver_default=driver_default)
     if TechXueXi_mode in ["3"]:
         print('开始每周答题……')
-        weekly(cookies, scores)
+        weekly(cookies, scores, driver_default=driver_default)
         print('开始专项答题……')
-        zhuanxiang(cookies, scores)
+        zhuanxiang(cookies, scores, driver_default=driver_default)
+    try:
+        driver_default.quit()
+    except Exception as e:
+        print('driver_default 在 main 退出时出了一点小问题...')
     if TechXueXi_mode == "4":
         user.select_user()
     if TechXueXi_mode == "5":
         user.refresh_all_cookies(display_score=True)
     if TechXueXi_mode == "6":
-        user.refresh_all_cookies(live_time=12.0)
+        user.refresh_all_cookies(live_time=11.90)
 
     seconds_used = int(time.time() - start_time)
     print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
