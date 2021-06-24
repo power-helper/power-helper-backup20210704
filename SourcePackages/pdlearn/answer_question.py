@@ -1,5 +1,7 @@
 import time
 import random
+from pdlearn import user
+from pdlearn import color
 from pdlearn.mydriver import Mydriver
 from pdlearn.score import show_score
 from pdlearn.const import const
@@ -12,13 +14,37 @@ def check_delay():
     time.sleep(delay_time)
 
 
-def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=None):
-    quiz_zh_CN={"daily": "每日","weekly":"每周","zhuanxiang":"专项"}
-    if(quiz_type not in ["daily","weekly","zhuanxiang"]):
+def find_available_quiz(quiz_type, driver_ans, uid):
+    pages = driver_ans.driver.find_elements_by_css_selector(".ant-pagination-item")
+    for p in range(len(pages)-1, -1, -1):  # 从最后一页开始往前找做题
+        time.sleep(0.5)
+        print('进入答题第' + str(p+1) + '页')
+        pages[p].click()
+        time.sleep(0.5)
+        if quiz_type == "weekly":  # 寻找可以做的题
+            dati = driver_ans.driver.find_elements_by_css_selector("#app .month .week button")
+        elif quiz_type == "zhuanxiang":  # 寻找可以做的题
+            # 可以使用 #app .items .item button:not(.ant-btn-background-ghost) 选择器，但会遗漏掉”继续答题“的部分
+            dati = driver_ans.driver.find_elements_by_css_selector("#app .items .item button")
+        for i in range(len(dati)-1, -1, -1):  # 从最后一个遍历到第一个
+            j = dati[i]
+            if ("重新" in j.text or "满分" in j.text):
+                continue
+            else:
+                to_click = j
+                # input("wait for Enter press...")
+                return to_click
+
+
+def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, uid=None, driver_default=None):
+    quiz_zh_CN={"daily": "每日", "weekly": "每周", "zhuanxiang": "专项"}
+    if(quiz_type not in ["daily", "weekly", "zhuanxiang"]):
         print("quiz_type 错误。收到的quiz_type："+quiz_type)
         exit(0)
-    if scores[quiz_type] < score_all: # 还没有满分，需要答题
-        if driver_default == None:
+    if uid is None:
+        uid = user.get_userId(cookies)
+    if scores[quiz_type] < score_all:  # 还没有满分，需要答题
+        if driver_default is None:
             driver_ans = Mydriver(nohead=False)
         else:
             driver_ans = driver_default
@@ -33,58 +59,22 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
         if scores[quiz_type] < score_all:
             letters = list("ABCDEFGHIJKLMN")
             driver_ans.get_url('https://pc.xuexi.cn/points/my-points.html')
-            driver_ans.click_xpath(quiz_xpath) #点击各个题目的去答题按钮
+            driver_ans.click_xpath(quiz_xpath)  # 点击各个题目的去答题按钮
             time.sleep(2)
-            if quiz_type == "weekly": #寻找可以做的题
-                '''            # <<<<<<< fix-some-bugs
-                #           flag = 1
-                #           for tem in range(0, 40):
-                #               for tem2 in range(0, 5):
-                #                   try:
-                #                       temword = driver_weekly.driver.find_element_by_xpath(
-                #                           '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
-                #                               tem2 + 1) + ']/button').text
-                #                   except:
-                #                       temword = ''
-                #                   name_list = ["开始答题", "继续答题"]
-                #                   if flag == 1 and (any(name in temword for name in name_list)):
-                #                       driver_weekly.click_xpath(
-                #                           '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
-                #                               tem2 + 1) + ']/button')
-                #                       flag = 0'''
-                dati = driver_weekly.driver.find_elements_by_css_selector("#app .month .week button")
-                toclick = dati
-                for i in range(len(dati)-1,-1,-1):
-                    j = dati[i]
-                    if ("重新" in j.text or "满分" in j.text):
-                        continue
+            if quiz_type != "daily":  # 如果是每日答题就不用找available了
+                to_click = find_available_quiz(quiz_type, driver_ans, uid)
+                if to_click is not None:
+                    to_click.click()
+                    time.sleep(0.5)
+                else:
+                    print(color.blue("无题可答。即将跳过。"))
+                    if driver_default == None:
+                        try:
+                            driver_ans.quit()
+                        except Exception as e:
+                            print('driver_ans 在 answer_question 退出时出了一点小问题...')
                     else:
-                        toclick = j
-                        toclick.click()
-                        break
-            elif quiz_type == "zhuanxiang": #寻找可以做的题
-                '''            #           for tem in range(0, 40):
-                #               try:
-                #                   temword = driver_zhuanxiang.driver.find_element_by_xpath(
-                #                       '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button').text
-                #               except:
-                #                   temword = ''
-                #               name_list = ["开始答题", "继续答题"]  # , "重新答题"
-                #               if (any(name in temword for name in name_list)):
-                #                   driver_zhuanxiang.click_xpath(
-                #                       '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
-                #                   break'''
-                dati = driver_zhuanxiang.driver.find_elements_by_css_selector("#app .items .item button")
-                toclick = dati
-                # print("专项答题列表长度：",len(toclick))
-                for i in range(len(dati) - 1, -1, -1):  # 从最后一个遍历到第一个
-                    j = dati[i]
-                    if ("重新" in j.text or "满分" in j.text):
-                        continue
-                    else:
-                        toclick = j
-                        toclick.click()
-                        break
+                        pass #其他函数传入函数的driver，不自动退出
             while scores[quiz_type] < score_all:
                 if quiz_type == "weekly":
                     '''# 

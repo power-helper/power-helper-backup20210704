@@ -73,6 +73,27 @@ def save_user_status(status):
     file.save_json_data("user/user_status.json", status)
 
 
+# def get_last_quiz(quiz_type, uid):
+#     template_json_str = '''{\n    "#-说明1":"此文件是保存用户最新完成的每周答题和专项答题的配置文件",''' + \
+#                         '''\n    "#-说明2":"程序会自动读写该文件。",''' + \
+#                         '''\n    "#-说明3":"如不熟悉，请勿自行修改内容。错误修改可能导致程序错误",''' + \
+#                         '''\n    "#____________________________________________________________":"",''' + \
+#                         '''\n    "weekly":{\n        "0":{"quiz_id":"0","quiz_page":0}\n    },''' + \
+#                         '''\n    "zhuanxiang":{\n        "0":"0"\n    }\n}'''
+#     status = file.get_json_data("user/last_quiz.json", template_json_str)
+#     save_last_quiz(status)
+#     # print(status)
+#     return None
+#
+#
+# def update_last_quiz(quiz_type, uid, quiz_title_str):
+#     pass
+#
+#
+# def save_last_quiz(status):
+#     file.save_json_data("user/last_quiz.json", status)
+
+
 def get_cookie(userId):
     userId = str(userId)
     template_json_str = '''{}'''
@@ -197,7 +218,8 @@ def refresh_all_cookies(live_time=8.0, display_score=False):  # cookie有效时�
                 print(color.green(
                     uid + "_" + get_nickname(uid) + "，登录剩余有效时间：" + str(int(remain_time * 1000) / 1000) + " 小时."), end="")
                 if remain_time < 0:
-                    print(color.red(" 已过期 需要重新登陆"))
+                    print(color.red(" 已过期 需要重新登陆，将自动移除此cookie."))
+                    remove_cookie(uid)
                 else:
                     # print(color.blue(" 有效"), end="")
                     valid_cookies.append(cookie_list)
