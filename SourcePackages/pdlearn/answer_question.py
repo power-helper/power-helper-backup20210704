@@ -155,7 +155,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                     print("本题没有提示")
                     if quiz_type == "daily":
                         log_daily("！！！！！本题没有找到提示，暂时略过！！！！！")
-                        sleep(3)
+                        time.sleep(3)
                     if "填空题" in category:
                         print('没有找到提示，暂时略过')
                         continue
