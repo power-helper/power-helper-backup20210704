@@ -14,6 +14,7 @@ def check_delay():
     time.sleep(delay_time)
 
 
+
 def find_available_quiz(quiz_type, driver_ans, uid):
     pages = driver_ans.driver.find_elements_by_css_selector(".ant-pagination-item")
     for p in range(len(pages)-1, -1, -1):  # 从最后一页开始往前找做题
@@ -48,10 +49,12 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
             driver_ans = Mydriver(nohead=False)
         else:
             driver_ans = driver_default
+
         driver_daily = driver_ans
         driver_weekly = driver_ans
         driver_zhuanxiang = driver_ans
         driver_ans.driver.maximize_window()
+
         print('请保持窗口最大化\n'*3)
         driver_ans.get_url("https://www.xuexi.cn/notFound.html")
         driver_ans.set_cookies(cookies)
@@ -59,6 +62,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
         if scores[quiz_type] < score_all:
             letters = list("ABCDEFGHIJKLMN")
             driver_ans.get_url('https://pc.xuexi.cn/points/my-points.html')
+
             driver_ans.click_xpath(quiz_xpath)  # 点击各个题目的去答题按钮
             time.sleep(2)
             if quiz_type != "daily":  # 如果是每日答题就不用找available了
@@ -75,6 +79,7 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                             print('driver_ans 在 answer_question 退出时出了一点小问题...')
                     else:
                         pass #其他函数传入函数的driver，不自动退出
+
             while scores[quiz_type] < score_all:
                 if quiz_type == "weekly":
                     '''# 
@@ -129,9 +134,11 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                         print(ans_results[0].text)
                         print(ans_results[2].get_attribute("innerHTML"))
                         print(ans_results[2].text)
+
                         time.sleep(3)
                         # exit(2)
                         break
+
                     log_daily("\n====================")
                     log_daily(log_timestamp())
                     log_daily("【"+category+"】")
@@ -149,8 +156,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                     print("本题没有提示")
                     if quiz_type == "daily":
                         log_daily("！！！！！本题没有找到提示，暂时略过！！！！！")
+
                         input("等待用户手动答题...完成后请在此按回车...")
                         time.sleep(3)
+
                     if "填空题" in category:
                         print('没有找到提示，暂时略过')
                         continue
@@ -200,7 +209,9 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                             else:
                                 print('无法根据提示判断，请自行答题……')
                                 log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+
                                 input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             radio_in_tips, radio_out_tips = "", ""
@@ -222,8 +233,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 driver_weekly.radio_check(radio_out_tips)
                             # return driver_weekly._search(content, options, excludes)
                             else:
+
                                 print('无法根据提示判断，请自行准备搜索……')
                                 input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "zhuanxiang":
                             options = driver_zhuanxiang.radio_get_options()
                             radio_in_tips, radio_out_tips = "", ""
@@ -245,8 +258,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 driver_zhuanxiang.radio_check(radio_out_tips)
                             # return driver_zhuanxiang._search(content, options, excludes)
                             else:
+
                                 print('无法根据提示判断，请自行准备搜索……')
                                 input("等待用户手动答题...完成后请在此按回车...")
+
                     elif "单选题" in category:
                         if quiz_type == "daily":
                             options = driver_daily.radio_get_options()
@@ -286,7 +301,9 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 else:
                                     print('无法根据提示判断，请自行答题……')
                                     log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+
                                     input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             if '因此本题选' in tips:
@@ -319,8 +336,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                     driver_weekly.radio_check(radio_out_tips)
                                 # return driver_weekly._search(content, options, excludes)
                                 else:
+
                                     print('无法根据提示判断，请自行准备搜索……')
                                     input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "zhuanxiang":
                             options = driver_zhuanxiang.radio_get_options()
                             if '因此本题选' in tips:
@@ -353,14 +372,17 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                     driver_zhuanxiang.radio_check(radio_out_tips)
                                 # return driver_zhuanxiang._search(content, options, excludes)
                                 else:
+
                                     print('无法根据提示判断，请自行准备搜索……')
                                     input("等待用户手动答题...完成后请在此按回车...")
+
                     else:
                         print("题目类型非法")
                         if quiz_type == "daily":
                             log_daily("！！！！！有提示，但题目类型非法！！！！！")
                         break
                     time.sleep(1)
+
             total, scores = show_score(cookies)
             if scores[quiz_type] >= score_all:
                 print("检测到"+quiz_zh_CN[quiz_type]+"答题分数已满,退出学习")
@@ -381,26 +403,32 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
 
 
 def daily(cookies, scores, driver_default=None):
+
     quiz_type = "daily"
     score_all = const.daily_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]'
+
     answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 
 def weekly(cookies, scores, driver_default=None):
+
     quiz_type = "weekly"
     score_all = const.weekly_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]'
+
     answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 
 def zhuanxiang(cookies, scores, driver_default=None):
+
     quiz_type = "zhuanxiang"
     score_all = const.zhuanxiang_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[7]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[1]'
+
     answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 

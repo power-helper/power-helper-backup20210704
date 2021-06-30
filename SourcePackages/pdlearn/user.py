@@ -3,13 +3,21 @@ import re
 import time
 import pickle
 import base64
+
 import requests
 from requests.cookies import RequestsCookieJar
+
 from sys import argv
 from pdlearn import score
 from pdlearn import file
 from pdlearn import color
+
 from pdlearn.mydriver import Mydriver
+
+
+def get_userId(cookies):
+    userId, total, scores = score.get_score(cookies)
+    return userId
 
 
 def get_userId(cookies):
@@ -22,15 +30,19 @@ def get_fullname(userId):
     status = get_user_status()
     for i in status["userId_mapping"]:
         nickname = status["userId_mapping"][i]
+
         if (str(userId) == i):
             fullname = i + '_' + nickname
             break
     if (fullname == ""):
+
         print("查找 userId: " + str(userId) + " 失败...")
         pattern = re.compile(u'^[a-zA-Z0-9_\u4e00-\u9fa5]+$')
         while True:
             input_name = input("将为此 userId 添加一个新用户。请输入此用户昵称：")
+
             if (pattern.search(input_name) != None):
+
                 break
             else:
                 print("输入不符合要求，输入内容只能为：英文字母、数字、下划线、中文。")
@@ -39,8 +51,10 @@ def get_fullname(userId):
     return fullname
 
 
+
 def get_nickname(userId):
     return get_fullname(userId).split('_', 1)[1]
+
 
 
 def save_fullname(fullname):
@@ -49,6 +63,7 @@ def save_fullname(fullname):
     nickname = fullname.split('_', 1)[1]
     status["userId_mapping"][userId] = nickname
     save_user_status(status)
+
 
 
 def get_user_status():
@@ -126,11 +141,27 @@ def save_cookies(cookies):
     file.save_json_data("user/cookies.json", cookies_json_obj)
 
 
+def get_user_status():
+    template_json_str = '''{\n    "#-说明1":"此文件是保存用户数据及登陆状态的配置文件",'''+\
+                        '''\n    "#-说明2":"程序会自动读写该文件。",'''+\
+                        '''\n    "#-说明3":"如不熟悉，请勿自行修改内容。错误修改可能导致程序崩溃",'''+\
+                        '''\n    "#____________________________________________________________":"",'''+\
+                        '''\n    "last_userId":0,\n    "userId_mapping":{\n        "0":"default"\n    }\n}'''
+    status = file.get_json_data("user/user_status.json", template_json_str)
+    save_user_status(status)
+    # print(status)
+    return status
+
+
 def remove_cookie(uid):
     template_json_str = '''{}'''
     cookies_json_obj = file.get_json_data("user/cookies.json", template_json_str)
     cookies_json_obj.pop(str(uid))
     file.save_json_data("user/cookies.json", cookies_json_obj)
+
+
+def save_user_status(status):
+    file.save_json_data("user/user_status.json", status)
 
 
 def get_article_video_json():
@@ -139,16 +170,33 @@ def get_article_video_json():
     return article_video_json
 
 
+def save_cookies(cookies):
+    # print(type(cookies), cookies)
+    template_json_str = '''{}'''
+    cookies_json_obj = file.get_json_data("user/cookies.json", template_json_str)
+    userId = get_userId(cookies)
+    cookies_bytes = pickle.dumps(cookies)
+    cookies_b64 = base64.b64encode(cookies_bytes)
+    cookies_json_obj[str(userId)] = str(cookies_b64, encoding='utf-8')
+    # print(type(cookies_json_obj), cookies_json_obj)
+    file.save_json_data("user/cookies.json", cookies_json_obj)
+
+
 def get_index(userId, index_type):
     article_video_json = get_article_video_json()
     indexs = article_video_json[index_type]
     if (str(userId) in indexs.keys()):
+
         index = indexs[str(userId)]
     else:
         index = 0
         article_video_json[index_type][str(userId)] = index
         file.save_json_data("user/article_video_index.json", article_video_json)
     return int(index)
+
+
+def save_article_index(userId, index):
+    return save_index(userId, index, "article_index")
 
 
 def save_index(userId, index, index_type):
@@ -173,10 +221,12 @@ def save_video_index(userId, index):
     return save_index(userId, index, "video_index")
 
 
+
 def get_default_userId():
     status = get_user_status()
     default_userId = status['last_userId']
     return default_userId
+
 
 
 def get_default_nickname():
@@ -185,6 +235,7 @@ def get_default_nickname():
 
 def get_default_fullname():
     return get_fullname(get_default_userId())
+
 
 
 def check_default_user_cookie():
@@ -200,6 +251,7 @@ def check_default_user_cookie():
     else:
         print(color.green("（cookie信息有效）"))
         return cookies
+
 
 
 # 保活。执行会花费一定时间，全新cookies的有效时间是12h
@@ -280,8 +332,20 @@ def list_user(printing=True):
     return all_users
 
 
+# 如有多用户，打印各个用户信息
+def list_user():
+    status = get_user_status()
+    mapping = status['userId_mapping']
+    map_count = len(mapping)
+    if(map_count > 2):
+        print("检测到您有多用户：", end="")
+        for i in mapping:
+            print(color.blue(i + "_" + mapping[i]), end="; ")
+        print("(暂不支持切换用户)")
+
 # 多用户中选择一个用户，半成品
 def select_user():
+
     user_list = list_user(printing=False)
     user_count = len(user_list)
     print("=" * 60)
@@ -299,6 +363,7 @@ def select_user():
             update_last_user(user_id)
     else:
         print("目前你只有一个用户。用户名：", get_default_userId(), "，昵称：", get_default_nickname())
+
 
 
 # 仅适用于Windows的关机，有待改进

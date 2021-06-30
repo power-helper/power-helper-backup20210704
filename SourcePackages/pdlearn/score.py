@@ -1,7 +1,9 @@
 import requests
 from requests.cookies import RequestsCookieJar
 import json
+
 from pdlearn import color
+
 from pdlearn.const import const
 
 
@@ -9,6 +11,7 @@ from pdlearn.const import const
 # https://pc-api.xuexi.cn/open/api/score/get?_t=1608769882241
 # 今日积分
 # https://pc-api.xuexi.cn/open/api/score/today/query
+
 
 
 def handle_score_color(score, full_score):
@@ -29,6 +32,7 @@ def show_score(cookies):
         "每日答题:", handle_score_color(scores["daily"], const.daily_all), ",",
         "每周答题:", handle_score_color(scores["weekly"], const.weekly_all), ",",
         "专项答题:", handle_score_color(scores["zhuanxiang"], const.zhuanxiang_all))
+
     return total, scores
 
 

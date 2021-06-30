@@ -55,6 +55,7 @@ if __name__ == '__main__':
     cookies = user.check_default_user_cookie()
     user.list_user()
     user.refresh_all_cookies()
+    # user.select_user()
     print("=" * 60, '''\nTechXueXi 现支持以下模式（答题时请值守电脑旁处理少部分不正常的题目）：''')
     print(cfg['base']['ModeText'] + '\n' + "=" * 60) # 模式提示文字请在 ./config/main.ini 处修改。
     
@@ -83,6 +84,7 @@ if __name__ == '__main__':
     
     total, scores = show_score(cookies)
     nohead, lock, stime = get_argv()
+
 
     if TechXueXi_mode in ["1", "2", "3"]:
         article_thread = threads.MyThread("文章学习", article, uid, cookies, article_index, scores, lock=lock)
@@ -117,3 +119,24 @@ if __name__ == '__main__':
         user.shutdown(stime)
     except Exception as e:
         pass
+#=======
+#    article_thread = threads.MyThread("文章学习", article, uid, cookies, article_index, scores, lock=lock)
+#    video_thread = threads.MyThread("视频学习", video, uid, cookies, video_index, scores, lock=lock)
+#    article_thread.start()
+#    video_thread.start()
+#    article_thread.join()
+#    video_thread.join()
+
+#    if TechXueXi_mode in ["2", "3"]:
+#        print('开始每日答题……')
+#        daily(cookies, scores)
+#    if TechXueXi_mode in ["3"]:
+#        print('开始每周答题……')
+#        weekly(cookies, scores)
+#        print('开始专项答题……')
+#        zhuanxiang(cookies, scores)
+
+#    seconds_used = int(time.time() - start_time)
+#    print("总计用时 " + str(math.floor(seconds_used / 60)) + " 分 " + str(seconds_used % 60) + " 秒")
+#    user.shutdown(stime)
+#>>>>>>> master

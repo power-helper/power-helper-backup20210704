@@ -80,9 +80,10 @@ class Mydriver:
                 self.driver = self.webdriver.Chrome(executable_path="/usr/local/bin/chromedriver",
                                                     chrome_options=self.options)
             else:
-                self.driver = self.webdriver.Chrome(chrome_options=self.options)
+                self.driver = self.webdriver.Chrome(executable_path="./chrome/chromedriver.exe",chrome_options=self.options)
         except:
             print("=" * 60)
+
             print("Mydriver初始化失败。您可以检查下：")
             print("1. 是否存在./chrome/chromedriver.exe 或 PATH 中是否存在 chromedriver.exe")
             print("2. 浏览器地址栏输入 chrome://version 看到的chrome版本 和 运行 chromedriver.exe 显示的版本整数部分是否相同")
@@ -90,6 +91,7 @@ class Mydriver:
             print("3. 如不是以上问题，请提issue，附上报错信息和您的环境信息")
             print("=" * 60)
             input("按回车键继续......")
+
             raise
 
     def get_cookie_from_network(self):
@@ -138,11 +140,13 @@ class Mydriver:
             return cookies
         except Exception as e:
             self.quit()
+
             print("扫描二维码超时... 错误信息：" + str(e))
             if str(e).find("check_hostname") > -1 and str(e).find("server_hostname") > -1:
                 print("针对“check_hostname requires server_hostname”问题：")
                 print("您的网络连接存在问题，请检查您与xuexi.cn的网络连接并关闭“某些”软件")
             input("按回车键退出程序. ")
+
             exit()
 
     def toDingDing(self):
