@@ -70,6 +70,9 @@ class Mydriver:
             elif os.path.exists("./chromedriver"):  # linux
                 self.driver = self.webdriver.Chrome(executable_path="./chromedriver",
                                                     chrome_options=self.options)
+            elif os.path.exists("/usr/bin/chromedriver"):  # linux用户安装
+                self.driver = self.webdriver.Chrome(executable_path="/usr/bin/chromedriver",
+                                                    chrome_options=self.options)
             elif os.path.exists("/usr/lib64/chromium-browser/chromedriver"):  # linux 包安装chromedriver
                 self.driver = self.webdriver.Chrome(executable_path="/usr/lib64/chromium-browser/chromedriver",
                                                     chrome_options=self.options)
@@ -80,8 +83,15 @@ class Mydriver:
                 self.driver = self.webdriver.Chrome(executable_path="./chrome/chromedriver.exe",chrome_options=self.options)
         except:
             print("=" * 60)
-            print("Mydriver初始化失败")
+
+            print("Mydriver初始化失败。您可以检查下：")
+            print("1. 是否存在./chrome/chromedriver.exe 或 PATH 中是否存在 chromedriver.exe")
+            print("2. 浏览器地址栏输入 chrome://version 看到的chrome版本 和 运行 chromedriver.exe 显示的版本整数部分是否相同")
+            print("针对上述问题，请在 http://npm.taobao.org/mirrors/chromedriver 下载对应版本程序并放在合适的位置")
+            print("3. 如不是以上问题，请提issue，附上报错信息和您的环境信息")
             print("=" * 60)
+            input("按回车键继续......")
+
             raise
 
     def get_cookie_from_network(self):
@@ -130,7 +140,13 @@ class Mydriver:
             return cookies
         except Exception as e:
             self.quit()
-            input("扫描二维码超时... 按回车键退出程序. 错误信息：" + str(e))
+
+            print("扫描二维码超时... 错误信息：" + str(e))
+            if str(e).find("check_hostname") > -1 and str(e).find("server_hostname") > -1:
+                print("针对“check_hostname requires server_hostname”问题：")
+                print("您的网络连接存在问题，请检查您与xuexi.cn的网络连接并关闭“某些”软件")
+            input("按回车键退出程序. ")
+
             exit()
 
     def toDingDing(self):

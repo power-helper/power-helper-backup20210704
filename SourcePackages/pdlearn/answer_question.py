@@ -1,5 +1,7 @@
 import time
 import random
+from pdlearn import user
+from pdlearn import color
 from pdlearn.mydriver import Mydriver
 from pdlearn.score import show_score
 from pdlearn.const import const
@@ -12,75 +14,72 @@ def check_delay():
     time.sleep(delay_time)
 
 
-def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath ):
-    if scores[quiz_type] < score_all:
-        # driver_ans = Mydriver(nohead=nohead)  time.sleep(random.randint(5, 15))
-        driver_ans = Mydriver(nohead=False)
+
+def find_available_quiz(quiz_type, driver_ans, uid):
+    pages = driver_ans.driver.find_elements_by_css_selector(".ant-pagination-item")
+    for p in range(len(pages)-1, -1, -1):  # 从最后一页开始往前找做题
+        time.sleep(0.5)
+        print('进入答题第' + str(p+1) + '页')
+        pages[p].click()
+        time.sleep(0.5)
+        if quiz_type == "weekly":  # 寻找可以做的题
+            dati = driver_ans.driver.find_elements_by_css_selector("#app .month .week button")
+        elif quiz_type == "zhuanxiang":  # 寻找可以做的题
+            # 可以使用 #app .items .item button:not(.ant-btn-background-ghost) 选择器，但会遗漏掉”继续答题“的部分
+            dati = driver_ans.driver.find_elements_by_css_selector("#app .items .item button")
+        for i in range(len(dati)-1, -1, -1):  # 从最后一个遍历到第一个
+            j = dati[i]
+            if ("重新" in j.text or "满分" in j.text):
+                continue
+            else:
+                to_click = j
+                # input("wait for Enter press...")
+                return to_click
+
+
+def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, uid=None, driver_default=None):
+    quiz_zh_CN={"daily": "每日", "weekly": "每周", "zhuanxiang": "专项"}
+    if(quiz_type not in ["daily", "weekly", "zhuanxiang"]):
+        print("quiz_type 错误。收到的quiz_type："+quiz_type)
+        exit(0)
+    if uid is None:
+        uid = user.get_userId(cookies)
+    if scores[quiz_type] < score_all:  # 还没有满分，需要答题
+        if driver_default is None:
+            driver_ans = Mydriver(nohead=False)
+        else:
+            driver_ans = driver_default
+
         driver_daily = driver_ans
         driver_weekly = driver_ans
         driver_zhuanxiang = driver_ans
         driver_ans.driver.maximize_window()
-        print('请保持窗口最大化')
-        print('请保持窗口最大化')
-        print('请保持窗口最大化')
+
+        print('请保持窗口最大化\n'*3)
         driver_ans.get_url("https://www.xuexi.cn/notFound.html")
         driver_ans.set_cookies(cookies)
         try_count = 0
         if scores[quiz_type] < score_all:
             letters = list("ABCDEFGHIJKLMN")
             driver_ans.get_url('https://pc.xuexi.cn/points/my-points.html')
-            driver_ans.click_xpath(quiz_xpath) #点击各个题目的去答题按钮
+
+            driver_ans.click_xpath(quiz_xpath)  # 点击各个题目的去答题按钮
             time.sleep(2)
-            if quiz_type == "weekly": #寻找可以做的题
-                '''            # <<<<<<< fix-some-bugs
-                #           flag = 1
-                #           for tem in range(0, 40):
-                #               for tem2 in range(0, 5):
-                #                   try:
-                #                       temword = driver_weekly.driver.find_element_by_xpath(
-                #                           '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
-                #                               tem2 + 1) + ']/button').text
-                #                   except:
-                #                       temword = ''
-                #                   name_list = ["开始答题", "继续答题"]
-                #                   if flag == 1 and (any(name in temword for name in name_list)):
-                #                       driver_weekly.click_xpath(
-                #                           '//*[@id="app"]/div/div[2]/div/div[4]/div/div[' + str(tem + 1) + ']/div[2]/div[' + str(
-                #                               tem2 + 1) + ']/button')
-                #                       flag = 0'''
-                dati = driver_weekly.driver.find_elements_by_css_selector("#app .month .week button")
-                toclick = dati
-                for i in range(len(dati)-1,-1,-1):
-                    j = dati[i]
-                    if ("重新" in j.text or "满分" in j.text):
-                        continue
+            if quiz_type != "daily":  # 如果是每日答题就不用找available了
+                to_click = find_available_quiz(quiz_type, driver_ans, uid)
+                if to_click is not None:
+                    to_click.click()
+                    time.sleep(0.5)
+                else:
+                    print(color.blue("无题可答。即将跳过。"))
+                    if driver_default == None:
+                        try:
+                            driver_ans.quit()
+                        except Exception as e:
+                            print('driver_ans 在 answer_question 退出时出了一点小问题...')
                     else:
-                        toclick = j
-                        toclick.click()
-                        break
-            elif quiz_type == "zhuanxiang": #寻找可以做的题
-                '''            #           for tem in range(0, 40):
-                #               try:
-                #                   temword = driver_zhuanxiang.driver.find_element_by_xpath(
-                #                       '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button').text
-                #               except:
-                #                   temword = ''
-                #               name_list = ["开始答题", "继续答题"]  # , "重新答题"
-                #               if (any(name in temword for name in name_list)):
-                #                   driver_zhuanxiang.click_xpath(
-                #                       '//*[@id="app"]/div/div[2]/div/div[4]/div/div/div/div[' + str(tem + 1) + ']/div[2]/button')
-                #                   break'''
-                dati = driver_zhuanxiang.driver.find_elements_by_css_selector("#app .items .item button")
-                toclick = dati
-                # print("专项答题列表长度：",len(toclick))
-                for i in range(len(dati) - 1, -1, -1):  # 从最后一个遍历到第一个
-                    j = dati[i]
-                    if ("重新" in j.text or "满分" in j.text):
-                        continue
-                    else:
-                        toclick = j
-                        toclick.click()
-                        break
+                        pass #其他函数传入函数的driver，不自动退出
+
             while scores[quiz_type] < score_all:
                 if quiz_type == "weekly":
                     '''# 
@@ -135,9 +134,11 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                         print(ans_results[0].text)
                         print(ans_results[2].get_attribute("innerHTML"))
                         print(ans_results[2].text)
-                        input("wait...")
-                        exit(2)
-                        break;
+
+                        time.sleep(3)
+                        # exit(2)
+                        break
+
                     log_daily("\n====================")
                     log_daily(log_timestamp())
                     log_daily("【"+category+"】")
@@ -155,7 +156,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                     print("本题没有提示")
                     if quiz_type == "daily":
                         log_daily("！！！！！本题没有找到提示，暂时略过！！！！！")
-                        sleep(3)
+
+                        input("等待用户手动答题...完成后请在此按回车...")
+                        time.sleep(3)
+
                     if "填空题" in category:
                         print('没有找到提示，暂时略过')
                         continue
@@ -205,6 +209,9 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                             else:
                                 print('无法根据提示判断，请自行答题……')
                                 log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+
+                                input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             radio_in_tips, radio_out_tips = "", ""
@@ -226,7 +233,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 driver_weekly.radio_check(radio_out_tips)
                             # return driver_weekly._search(content, options, excludes)
                             else:
-                                print('无法根据提示判断，准备搜索……')
+
+                                print('无法根据提示判断，请自行准备搜索……')
+                                input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "zhuanxiang":
                             options = driver_zhuanxiang.radio_get_options()
                             radio_in_tips, radio_out_tips = "", ""
@@ -248,7 +258,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 driver_zhuanxiang.radio_check(radio_out_tips)
                             # return driver_zhuanxiang._search(content, options, excludes)
                             else:
-                                print('无法根据提示判断，准备搜索……')
+
+                                print('无法根据提示判断，请自行准备搜索……')
+                                input("等待用户手动答题...完成后请在此按回车...")
+
                     elif "单选题" in category:
                         if quiz_type == "daily":
                             options = driver_daily.radio_get_options()
@@ -288,6 +301,9 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                 else:
                                     print('无法根据提示判断，请自行答题……')
                                     log_daily("！！！！！无法根据提示判断，请自行答题……！！！！！")
+
+                                    input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "weekly":
                             options = driver_weekly.radio_get_options()
                             if '因此本题选' in tips:
@@ -320,7 +336,10 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                     driver_weekly.radio_check(radio_out_tips)
                                 # return driver_weekly._search(content, options, excludes)
                                 else:
-                                    print('无法根据提示判断，准备搜索……')
+
+                                    print('无法根据提示判断，请自行准备搜索……')
+                                    input("等待用户手动答题...完成后请在此按回车...")
+
                         elif quiz_type == "zhuanxiang":
                             options = driver_zhuanxiang.radio_get_options()
                             if '因此本题选' in tips:
@@ -353,60 +372,63 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                                     driver_zhuanxiang.radio_check(radio_out_tips)
                                 # return driver_zhuanxiang._search(content, options, excludes)
                                 else:
-                                    print('无法根据提示判断，准备搜索……')
+
+                                    print('无法根据提示判断，请自行准备搜索……')
+                                    input("等待用户手动答题...完成后请在此按回车...")
+
                     else:
                         print("题目类型非法")
                         if quiz_type == "daily":
                             log_daily("！！！！！有提示，但题目类型非法！！！！！")
                         break
                     time.sleep(1)
-            if quiz_type == "daily":
-                total, scores = show_score(cookies)
-                if scores["daily"] >= const.daily_all:
-                    print("检测到每日答题分数已满,退出学习")
-                else:
-                    print("！！！！！没拿到满分！！！！！")
-                    log_daily("！！！！！没拿到满分！！！！！")
-            elif quiz_type == "weekly":
-                total, scores = show_score(cookies)
-                if scores["weekly"] >= const.weekly_all:
-                    print("检测到每周答题分数已满,退出学习")
-                    driver_weekly.quit()
-            elif quiz_type == "zhuanxiang":
-                total, scores = show_score(cookies)
-                if scores["zhuanxiang"] >= const.zhuanxiang_all:
-                    print("检测到专项答题分数已满,退出学习")
-                    driver_zhuanxiang.quit()
-        try:
-            driver_ans.quit()
-        except Exception as e:
-            print('driver_ans 在 answer_question 退出时出了一点小问题...')
+
+            total, scores = show_score(cookies)
+            if scores[quiz_type] >= score_all:
+                print("检测到"+quiz_zh_CN[quiz_type]+"答题分数已满,退出学习")
+            else:
+                print("！！！！！没拿到满分，请收集日志反馈错误题目！！！！！")
+                input("完成后（或懒得弄）请在此按回车...")
+                #log_daily("！！！！！没拿到满分！！！！！")
+        if driver_default == None:
+            try:
+                driver_ans.quit()
+            except Exception as e:
+                print('driver_ans 在 answer_question 退出时出了一点小问题...')
+        else:
+            pass #其他函数传入函数的driver，不自动退出
     else:
-        print(quiz_type+"答题之前学完了")
+        print(quiz_zh_CN[quiz_type]+"答题已满分.")
 
 
 
-def daily(cookies, scores):
+def daily(cookies, scores, driver_default=None):
+
     quiz_type = "daily"
     score_all = const.daily_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[5]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]'
-    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath)
+
+    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 
-def weekly(cookies, scores):
+def weekly(cookies, scores, driver_default=None):
+
     quiz_type = "weekly"
     score_all = const.weekly_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[6]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[4]/div[1]/div[1]'
-    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath)
+
+    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 
-def zhuanxiang(cookies, scores):
+def zhuanxiang(cookies, scores, driver_default=None):
+
     quiz_type = "zhuanxiang"
     score_all = const.zhuanxiang_all
     quiz_xpath = '//*[@id="app"]/div/div[2]/div/div[3]/div[2]/div[7]/div[2]/div[2]/div'
     category_xpath = '//*[@id="app"]/div/div[2]/div/div[6]/div[1]/div[1]'
-    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath)
+
+    answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, driver_default=driver_default)
 
 
